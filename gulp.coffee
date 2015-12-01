@@ -12,38 +12,36 @@ gRename = require('gulp-rename')
 gUglify = require('gulp-uglify')
 gCoffeeLint = require('gulp-coffeelint')
 gCoverageEnforcer = require("gulp-istanbul-enforcer");
-
-DIST_EXPORTS = (file) -> 'ko'
-DIST_NAMESPACE = (file) -> 'ko'
-DIST_DEPENDENCIES = (file) ->
-  [
-    {
-      name: 'knockout'
-      param: 'ko'
-    }
-    {
-      name: 'is-an'
-      param: 'isAn'
-    }
-  ]
+gAddSrc = require('gulp-add-src')
+gData = require('gulp-data')
 
 pipeCoffee = gLazy()
 .pipe(gUmd, {
   templateSource: '''
-  ko = require('knockout')
-  isAn = require('is-an')
+  <%
+    for (var i = 0; i != dependencies.length; ++i) {
+      %><%= dependencies[i].param %> = require('<%= dependencies[i].cjs || dependencies[i].name %>')
+  <%
+    }
+  %>
   <%= contents %>
   module.exports = <%= exports %>
   '''
-  exports: DIST_EXPORTS
+  exports: (file) ->
+    file.data.exports
+  dependencies: (file) ->
+    file.data.dependencies
 })
 
 pipeNode = gLazy()
 .pipe(gUmd,{
   templateName: 'node',
-  dependencies: DIST_DEPENDENCIES
-  exports: DIST_EXPORTS,
-  namespace: DIST_NAMESPACE
+  exports: (file) ->
+    file.data.exports
+  namespace: (file) ->
+    file.data.namespace
+  dependencies: (file) ->
+    file.data.dependencies
 })
 .pipe(gRename, {
     suffix: '.node'
@@ -52,9 +50,12 @@ pipeNode = gLazy()
 pipeBrowser = gLazy()
 .pipe(gUmd,{
   templateName: 'amdWeb',
-  dependencies: DIST_DEPENDENCIES
-  exports: DIST_EXPORTS,
-  namespace: DIST_NAMESPACE
+  exports: (file) ->
+    file.data.exports
+  namespace: (file) ->
+    file.data.namespace
+  dependencies: (file) ->
+    file.data.dependencies
 })
 .pipe(gRename, {
   suffix: '.web'
@@ -63,9 +64,12 @@ pipeBrowser = gLazy()
 pipeUmd = gLazy()
 .pipe(gUmd,{
   templateName: 'amdNodeWeb',
-  dependencies: DIST_DEPENDENCIES
-  exports: DIST_EXPORTS,
-  namespace: DIST_NAMESPACE
+  exports: (file) ->
+    file.data.exports
+  namespace: (file) ->
+    file.data.namespace
+  dependencies: (file) ->
+    file.data.dependencies
 })
 .pipe(gRename, {
   suffix: '.umd'
@@ -89,29 +93,70 @@ gulpClean = () ->
   .pipe(gClean())
 
 gulpBuild = () ->
+
+  platforms = gLazy()
+  .pipe(() -> gSourceMaps.init())
+  .pipe(() -> gCoffee({ bare: true }))
+  .pipe(() -> gMirror(
+    pipeNode()
+    pipeBrowser()
+    pipeUmd()
+    createUglifyPipe(pipeBrowser)()
+    createUglifyPipe(pipeUmd)()
+  ))
+  .pipe(() -> gSourceMaps.write())
+
   gulp
   .src([
       'src/ko-type-restricted.coffee'
   ])
   .pipe(gConcat('ko-type-restricted.coffee', { newLine: '\r\n' }))
+  .pipe(gData((file) ->
+    {
+      exports: 'applyKotr'
+      namespace: 'applyKotr'
+      dependencies: [
+        {
+          name: 'is-an'
+          global: 'isAn'
+          param: 'isAn'
+        }
+      ]
+    }
+  ))
   .pipe(gCoffeeLint())
   .pipe(gCoffeeLint.reporter())
   .pipe(gMirror(
-      pipeCoffee(),
-      (
-        gLazy()
-        .pipe(gSourceMaps.init)
-        .pipe(gConcat, 'ko-type-restricted.coffee')
-        .pipe(gCoffee, { bare: true })
-        .pipe(
-          gMirror,
-          pipeNode(),
-          pipeBrowser(),
-          pipeUmd(),
-          createUglifyPipe(pipeBrowser)(),
-          createUglifyPipe(pipeUmd)()
-        )
-        .pipe(gSourceMaps.write)
+    pipeCoffee(),
+    platforms()
+    (
+      gLazy()
+      .pipe(() -> gAddSrc.append([
+        'src/apply.coffee'
+      ]))
+      .pipe(() -> gConcat('ko-type-restricted.apply.coffee', { newLine: '\r\n' }))
+      .pipe(() -> gData((file) ->
+        {
+          exports: 'ko'
+          namespace: 'ko'
+          dependencies: [
+            {
+              name: 'knockout'
+              global: 'ko'
+              param: 'ko'
+            }
+            {
+              name: 'is-an'
+              global: 'isAn'
+              param: 'isAn'
+            }
+          ]
+        }
+      ))
+      .pipe(() -> gMirror(
+        pipeCoffee()
+        platforms()
+      ))
       )()
     ))
   .pipe(gulp.dest('dist'))
@@ -227,9 +272,9 @@ gulp.task('dist-git', ['dist-version'], (cb) ->
   exec('git checkout head')
   exec("git commit -m \"Version #{cfgNpm.version} for distribution\"")
   exec("git tag -a v#{cfgNpm.version} -m \"Add tag v#{cfgNpm.version}\"")
+  exec("npm publish")
   exec('git checkout master')
   exec('git push origin --tags')
-  exec('npm publish')
 
   cb()
   return

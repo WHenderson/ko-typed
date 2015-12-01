@@ -43,11 +43,11 @@
   },
   "max_line_length": {
     "value": 160,
-    "level": "error",
+    "level": "ignore",
     "limitComments": true
   },
   "missing_fat_arrows": {
-    "level": "error",
+    "level": "ignore",
     "is_strict": false
   },
   "newlines_after_classes": {
