@@ -5,5 +5,6 @@ suite('convert', () ->
   require('./base-typed')
 
   require('./force-errors')
-  
+
+  require('./validation')
 )

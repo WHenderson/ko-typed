@@ -162,82 +162,88 @@
           throw new TypeError("Unable to convert from internal type #{isAn(internalValue)}")
 
       write: (externalValue) ->
+        try
+          tryWrite = (convert, options) ->
+            if convert?
+              try
+                internalValue = convert(externalValue, options)
+              catch ex
+                if ex not instanceof TypeError
+                  throw ex
 
-        tryWrite = (convert, options) ->
-          if convert?
-            try
-              internalValue = convert(externalValue, options)
-            catch ex
-              if ex not instanceof TypeError
-                throw ex
+              if not ex?
+                target(internalValue)
+                return true
 
-            if not ex?
-              target(internalValue)
-              return true
+            return false
 
-          return false
+          # Look for specific conversion
+          for extTypeName in options.types
+            extTypeOptions = options[extTypeName]
 
-        # Look for specific conversion
-        for extTypeName in options.types
-          extTypeOptions = options[extTypeName]
-
-          if not extTypeOptions.check(externalValue)
-            continue
-
-          # go by our order
-          intTypeNames = extTypeOptions.types
-
-          if intTypeNames.length == 0 and not extTypeOptions.write?
-            if options.isTyped
-              # go by target order
-              intTypeNames = target.typeNames
-            else
-              # go by inferred order
-              intTypeNames = [isAn(externalValue)]
-
-          for intTypeName in intTypeNames
-            intTypeOptions = extTypeOptions[intTypeName] ? {}
-
-            if intTypeOptions.check? and not intTypeOptions.check(externalValue)
+            if not extTypeOptions.check(externalValue)
               continue
 
-            # try specific conversions
-            if tryWrite(intTypeOptions.write, intTypeOptions.writeOptions)
+            # go by our order
+            intTypeNames = extTypeOptions.types
+
+            if intTypeNames.length == 0 and not extTypeOptions.write?
+              if options.isTyped
+                # go by target order
+                intTypeNames = target.typeNames
+              else
+                # go by inferred order
+                intTypeNames = [isAn(externalValue)]
+
+            for intTypeName in intTypeNames
+              intTypeOptions = extTypeOptions[intTypeName] ? {}
+
+              if intTypeOptions.check? and not intTypeOptions.check(externalValue)
+                continue
+
+              # try specific conversions
+              if tryWrite(intTypeOptions.write, intTypeOptions.writeOptions)
+                return
+
+              # try no conversion
+              if extTypeName == intTypeName
+                target(externalValue)
+                return
+
+              # try default conversion
+              if not options.ignoreDefaultConverters
+                if tryWrite(ko.typeRestricted.getConverter(extTypeName, intTypeName), intTypeOptions.writeOptions)
+                  return
+
+          # Look for one-sided conversion
+          for extTypeName in options.types
+            extTypeOptions = options[extTypeName]
+
+            if not extTypeOptions.check(externalValue)
+              continue
+
+            if tryWrite(extTypeOptions.write, extTypeOptions.writeOptions)
               return
 
-            # try no conversion
-            if extTypeName == intTypeName
+          # Look for generic conversion
+          if options.check(externalValue)
+            if tryWrite(options.write, options.writeOptions)
+              return
+
+            if options.types.length == 0
               target(externalValue)
               return
 
-            # try default conversion
-            if not options.ignoreDefaultConverters
-              if tryWrite(ko.typeRestricted.getConverter(extTypeName, intTypeName), intTypeOptions.writeOptions)
-                return
+          if options.isTyped
+            throw new TypeError("Unable to convert from external type #{isAn(externalValue)} to internal type #{target.typeName}")
+          else
+            throw new TypeError("Unable to convert from external type #{isAn(externalValue)}")
+        catch ex
+          if ex instanceof TypeError
+            result.typeError(ex.message)
+          throw ex
 
-        # Look for one-sided conversion
-        for extTypeName in options.types
-          extTypeOptions = options[extTypeName]
-
-          if not extTypeOptions.check(externalValue)
-            continue
-
-          if tryWrite(extTypeOptions.write, extTypeOptions.writeOptions)
-            return
-
-        # Look for generic conversion
-        if options.check(externalValue)
-          if tryWrite(options.write, options.writeOptions)
-            return
-
-          if options.types.length == 0
-            target(externalValue)
-            return
-
-        if options.isTyped
-          throw new TypeError("Unable to convert from external type #{isAn(externalValue)} to internal type #{target.typeName}")
-        else
-          throw new TypeError("Unable to convert from external type #{isAn(externalValue)}")
+        result.typeError(undefined)
     })
 
     result.typeName = options.type
@@ -245,4 +251,14 @@
     result.typeCheck = options.check
     result.typeChecks = options.checks
 
+    result.typeError = ko.observable()
+
+    if options.validate
+      validate(result, options.message)
+
     return result
+
+  ko.extenders.convert.options = {
+    validate: true
+    message: undefined
+  }

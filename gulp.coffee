@@ -110,6 +110,7 @@ gulpBuild = () ->
   .src([
     'src/index.begin.coffee'
     'src/util/index.coffee'
+    'src/extenders/validate.coffee'
     'src/extenders/type.coffee'
     'src/extenders/convert.coffee'
     'src/types/index.coffee'

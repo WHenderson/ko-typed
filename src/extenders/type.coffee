@@ -16,6 +16,8 @@
         check: options
       }
 
+    options = ko.utils.extend(ko.utils.extend({}, ko.extenders.type.options), options)
+
     # Gather type names
     typeNames = typeNameToArray(options.type)
 
@@ -50,10 +52,17 @@
         return internalValue
 
       write: (externalValue) ->
-        if typeCheck(externalValue)
-          target(externalValue)
-        else
-          throw new TypeError("Unexpected external type. Expected #{typeName}, received #{isAn(externalValue)}")
+        try
+          if typeCheck(externalValue)
+            target(externalValue)
+          else
+            throw new TypeError("Unexpected external type. Expected #{typeName}, received #{isAn(externalValue)}")
+        catch ex
+          if ex instanceof TypeError
+            result.typeError(ex.message)
+          throw ex
+
+        result.typeError(undefined)
     })
 
     result.typeName = typeName
@@ -61,4 +70,15 @@
     result.typeCheck = typeCheck
     result.typeChecks = typeChecks
 
+    result.typeError = ko.observable()
+
+    if options.validate
+      validate(result, options.message)
+
     return result
+
+  ko.extenders.type.options = {
+    validate: true
+    message: undefined
+  }
+
