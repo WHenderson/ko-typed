@@ -136,6 +136,49 @@ A function which returns true if the provided value is of the expected type.
 A function which returns true if the provided value is of the expected type for `CustomTypeName`
 `CustomTypeName` must be a valid identifier as defined by the is-an library.
 
+##### `.extend({ type: { noThrow: boolean } })`
+`.extend({ type: { noThrow: true } })`
+
+When set to true, the write method will not raise TypeError exceptions for invalid types.
+Use `.typeWriteError()` to determine if errors have been thrown.
+
+##### `.extend({ type: { useDefault: boolean } })`
+##### `.extend({ type: { default: any } })`
+##### `.extend({ type: { defaultFunc: function } })`
+`.extend({ type: { useDefault: true, default: 10 } })`
+`.extend({ type: { useDefault: true, defaultFunc: function () { return 10; } } })`
+
+When `useDefault` is set to true, the read method will not raise TypeError exceptions for invalid types.
+Instead, the `default` value or result of `defaultFunc()` will be used.
+Use `.typeReadError()` to determine if errors have been thrown.
+
+##### `.extend({ type: { pure: boolean } })`
+.extend({ type: { pure: true } })
+
+Determine if a computed or pureComputed observable is used for wrapping.
+
+##### `.extend({ type: { deferEvaluation: boolean } })`
+.extend({ type: { deferEvaluation: true } })
+
+Determine if the read function is executed immediately.
+Note that this also applies to pure computeds so that errors can be determined immediately.
+
+##### `.extend({ type: { validate: boolean } })`
+`.extend({ type: { validate: true } })`
+
+If true, the observable will be made validatable using the knockout-validation engine. https://github.com/Knockout-Contrib/Knockout-Validation
+
+##### `.extend({ type: { message: string } })`
+`.extend({ type: { message: 'invalid value' } })`
+
+Used in conjunction with `validate`.
+If set, this message will override the message given to the validation engine.
+
+##### defaults
+
+`ko.extenders.type.options` contains the default options used for the `type` extender.
+Modifying this value will effect all subsequent `type` extensions.
+
 #### `convert`
 
 Extend an observable to convert to/from the underlying observable.
@@ -245,3 +288,46 @@ Note that this only performs type checks, it does not attempt any conversions.
 
 ##### `.typeChecks` : object
 object literal. keys are type names, values are type checks.
+
+##### `.extend({ type: { noThrow: boolean } })`
+`.extend({ type: { noThrow: true } })`
+
+When set to true, the write method will not raise TypeError exceptions for invalid types.
+Use `.typeWriteError()` to determine if errors have been thrown.
+
+##### `.extend({ type: { useDefault: boolean } })`
+##### `.extend({ type: { default: any } })`
+##### `.extend({ type: { defaultFunc: function } })`
+`.extend({ type: { useDefault: true, default: 10 } })`
+`.extend({ type: { useDefault: true, defaultFunc: function () { return 10; } } })`
+
+When `useDefault` is set to true, the read method will not raise TypeError exceptions for invalid types.
+Instead, the `default` value or result of `defaultFunc()` will be used.
+Use `.typeReadError()` to determine if errors have been thrown.
+
+##### `.extend({ type: { pure: boolean } })`
+.extend({ type: { pure: true } })
+
+Determine if a computed or pureComputed observable is used for wrapping.
+
+##### `.extend({ type: { deferEvaluation: boolean } })`
+.extend({ type: { deferEvaluation: true } })
+
+Determine if the read function is executed immediately.
+Note that this also applies to pure computeds so that errors can be determined immediately.
+
+##### `.extend({ type: { validate: boolean } })`
+`.extend({ type: { validate: true } })`
+
+If true, the observable will be made validatable using the knockout-validation engine. https://github.com/Knockout-Contrib/Knockout-Validation
+
+##### `.extend({ type: { message: string } })`
+`.extend({ type: { message: 'invalid value' } })`
+
+Used in conjunction with `validate`.
+If set, this message will override the message given to the validation engine.
+
+##### defaults
+
+`ko.extenders.convert.options` contains the default options used for the `convert` extender.
+Modifying this value will effect all subsequent `convert` extensions.
