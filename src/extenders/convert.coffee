@@ -18,10 +18,12 @@
         pure: options.pure
         deferEvaluation: options.deferEvaluation
         defaultFunc: options.defaultFunc
+        noThrow: options.noThrow
+        message: options.message
+        useDefault: options.useDefault
       }
 
       if finalOptions.useDefault and not options.defaultFunc?
-        finalOptions.useDefault = true
         finalOptions.default = options.default
         finalOptions.defaultFunc = () -> finalOptions.default
 
@@ -134,7 +136,7 @@
                   continue
 
               # get the options
-              intTypeOptions = extTypeOptions[intTypeName] ? {}
+              intTypeOptions = extTypeOptions[intTypeName] ? { check: extTypeOptions.check }
 
               # try specific conversions
               if tryRead(intTypeOptions.read, intTypeOptions.readOptions)
@@ -143,14 +145,14 @@
 
               # try no conversion
               if extTypeName == intTypeName
-                if not intTypeOptions.check? or intTypeOptions.check(internalValue)
+                if intTypeOptions.check(internalValue)
                   externalValue = internalValue
                   return externalValue
 
               # try default conversion
               if not options.ignoreDefaultConverters
                 if tryRead(ko.typeRestricted.getConverter(intTypeName, extTypeName), intTypeOptions.readOptions)
-                  if not intTypeOptions.check? or intTypeOptions.check(externalValue)
+                  if intTypeOptions.check(externalValue)
                     return externalValue
 
           # Look for one-sided conversion
@@ -184,7 +186,7 @@
 
           throw ex
         finally
-          if ex not instanceof TypeError
+          if not ex?
             result.typeReadError(undefined)
 
       write: (externalValue) ->
@@ -272,8 +274,9 @@
               return
 
           throw ex
-
-        result.typeWriteError(undefined)
+        finally
+          if not ex?
+            result.typeWriteError(undefined)
     })
 
     result.typeName = options.type

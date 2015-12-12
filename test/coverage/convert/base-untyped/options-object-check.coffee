@@ -1,6 +1,6 @@
 assert = require('chai').assert
 
-suite('object', () ->
+suite('object (check)', () ->
 
   test('External.Internal.check on read, convert', () ->
     base = ko.observable()
@@ -54,7 +54,6 @@ suite('object', () ->
       }
     })
 
-    debugger
     assert.strictEqual(convert(), '.read')
   )
 

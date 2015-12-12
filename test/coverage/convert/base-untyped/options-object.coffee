@@ -274,4 +274,27 @@ suite('object', () ->
     assert.equal(base(), false)
     assert.equal(convert(), 'F')
   )
+
+  test('computed', () ->
+    base = ko.observable()
+    typed = base.extend({
+      convert: {
+        type: 'Undefined'
+        pure: false
+      }
+    })
+
+    assert.ok(ko.isComputed(typed))
+    assert.notOk(ko.isPureComputed(typed))
+
+    typed = base.extend({
+      convert: {
+        type: 'Undefined'
+        pure: true
+      }
+    })
+
+    assert.ok(ko.isComputed(typed))
+    assert.ok(ko.isPureComputed(typed))
+  )
 )
