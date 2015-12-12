@@ -1,17 +1,18 @@
-  validate = (target, message) ->
+  validate = (target, options) ->
     rule = undefined
-    target.typeError.subscribe(
+    target.typeWriteError.subscribe(
       () ->
         # Try https://github.com/Knockout-Contrib/Knockout-Validation
         if ko.validation? and ko.validation.utils.isValidatable(target)
+          message = options.message ? target.typeWriteError() ? target.typeReadError()
           if not rule?
             rule = {
-              message: message ? target.typeError()
+              message: message
               validator: () ->
-                not target.typeError()?
+                not target.typeWriteError()? and not target.typeReadError()?
             }
             ko.validation.addAnonymousRule(target, rule)
           else
-            rule.message = message ? target.typeError()
+            rule.message = message
             target.rules.valueHasMutated()
     )

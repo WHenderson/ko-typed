@@ -19,7 +19,7 @@ suite('forced errors', () ->
     assert.isDefined(exRead)
     assert.instanceOf(exRead, Error)
     assert.equal(exRead.message, 'Fail Read')
-    assert.equal(convert.typeError(), undefined)
+    assert.equal(convert.typeWriteError(), undefined)
 
     try
       debugger
@@ -40,7 +40,7 @@ suite('forced errors', () ->
       }
     })
 
-    assert.strictEqual(convert.typeError(), undefined)
+    assert.strictEqual(convert.typeWriteError(), undefined)
 
     try
       convert()
@@ -49,7 +49,7 @@ suite('forced errors', () ->
     assert.isDefined(exRead)
     assert.instanceOf(exRead, TypeError)
     assert.equal(exRead.message, 'Unable to convert from internal type Undefined')
-    assert.strictEqual(convert.typeError(), undefined)
+    assert.strictEqual(convert.typeWriteError(), undefined)
 
     try
       convert(10)
@@ -58,6 +58,6 @@ suite('forced errors', () ->
     assert.isDefined(exWrite)
     assert.instanceOf(exWrite, TypeError)
     assert.equal(exWrite.message, 'Unable to convert from external type Number')
-    assert.strictEqual(convert.typeError(), exWrite.message)
+    assert.strictEqual(convert.typeWriteError(), exWrite.message)
   )
 )

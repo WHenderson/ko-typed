@@ -4,6 +4,9 @@
       if isAn.String(options) or isAn.Array(options)
         options = { type: options }
 
+      # merge options
+      options = ko.utils.extend(ko.utils.extend({}, ko.extenders.convert.options), options)
+
       finalOptions = {
         checkSelf: options.check ? () -> true
         read: options.read
@@ -12,7 +15,16 @@
         checkers: []
         isTyped: isTyped(target)
         ignoreDefaultConverters: options.ignoreDefaultConverters
+        pure: options.pure
+        deferEvaluation: options.deferEvaluation
+        defaultFunc: options.defaultFunc
       }
+
+      if {}.hasOwnProperty.call(options, 'default')
+        finalOptions.default = options.default
+
+      if {}.hasOwnProperty.call(finalOptions, 'default')
+        finalOptions.defaultFunc = () -> finalOptions.default
 
       finalOptions.checkers.push(finalOptions.checkSelf)
 
@@ -75,91 +87,106 @@
 
       options = finalOptions
 
-    result = ko.pureComputed({
+    result = ko.computed({
+      pure: options.pure
+      deferEvaluation: options.deferEvaluation
+
       read: () ->
-        internalValue = target()
-        externalValue = undefined
+        try
+          internalValue = target()
+          externalValue = undefined
 
-        # Try exact internal type match
-        tryRead = (convert, options) ->
-          if convert?
-            try
-              externalValue = convert(internalValue, options)
-            catch ex
-              if ex not instanceof TypeError
-                throw ex
+          # Try exact internal type match
+          tryRead = (convert, options) ->
+            if convert?
+              try
+                externalValue = convert(internalValue, options)
+              catch ex
+                if ex not instanceof TypeError
+                  throw ex
 
-            if not ex?
-              return true
+              if not ex?
+                return true
 
-          return false
+            return false
 
-        # Look for specific conversion
-        for extTypeName in options.types
-          extTypeOptions = options[extTypeName]
+          # Look for specific conversion
+          for extTypeName in options.types
+            extTypeOptions = options[extTypeName]
 
-          # go by our order
-          intTypeNames = extTypeOptions.types
+            # go by our order
+            intTypeNames = extTypeOptions.types
 
-          if intTypeNames.length == 0 and not extTypeOptions.read?
-            if options.isTyped
-              # go by target order
-              intTypeNames = target.typeNames
-            else
-              # go by inferred order
-              intTypeNames = [isAn(internalValue)]
+            if intTypeNames.length == 0 and not extTypeOptions.read?
+              if options.isTyped
+                # go by target order
+                intTypeNames = target.typeNames
+              else
+                # go by inferred order
+                intTypeNames = [isAn(internalValue)]
 
-          for intTypeName in intTypeNames
-            # check internal type
-            if options.isTyped
-              if not target.typeChecks[intTypeName]?(internalValue)
-                continue
-            else
-              if not isAn(internalValue, intTypeName)
-                continue
+            for intTypeName in intTypeNames
+              # check internal type
+              if options.isTyped
+                if not target.typeChecks[intTypeName]?(internalValue)
+                  continue
+              else
+                if not isAn(internalValue, intTypeName)
+                  continue
 
-            # get the options
-            intTypeOptions = extTypeOptions[intTypeName] ? {}
+              # get the options
+              intTypeOptions = extTypeOptions[intTypeName] ? {}
 
-            # try specific conversions
-            if tryRead(intTypeOptions.read, intTypeOptions.readOptions)
-              if intTypeOptions.check(externalValue)
-                return externalValue
-
-            # try no conversion
-            if extTypeName == intTypeName
-              if not intTypeOptions.check? or intTypeOptions.check(internalValue)
-                externalValue = internalValue
-                return externalValue
-
-            # try default conversion
-            if not options.ignoreDefaultConverters
-              if tryRead(ko.typeRestricted.getConverter(intTypeName, extTypeName), intTypeOptions.readOptions)
-                if not intTypeOptions.check? or intTypeOptions.check(externalValue)
+              # try specific conversions
+              if tryRead(intTypeOptions.read, intTypeOptions.readOptions)
+                if intTypeOptions.check(externalValue)
                   return externalValue
 
-        # Look for one-sided conversion
-        for extTypeName in options.types
-          extTypeOptions = options[extTypeName]
+              # try no conversion
+              if extTypeName == intTypeName
+                if not intTypeOptions.check? or intTypeOptions.check(internalValue)
+                  externalValue = internalValue
+                  return externalValue
 
-          if tryRead(extTypeOptions.read, extTypeOptions.readOptions)
-            if extTypeOptions.check(externalValue)
+              # try default conversion
+              if not options.ignoreDefaultConverters
+                if tryRead(ko.typeRestricted.getConverter(intTypeName, extTypeName), intTypeOptions.readOptions)
+                  if not intTypeOptions.check? or intTypeOptions.check(externalValue)
+                    return externalValue
+
+          # Look for one-sided conversion
+          for extTypeName in options.types
+            extTypeOptions = options[extTypeName]
+
+            if tryRead(extTypeOptions.read, extTypeOptions.readOptions)
+              if extTypeOptions.check(externalValue)
+                return externalValue
+
+          # Look for generic conversion
+          if tryRead(options.read, options.readOptions)
+            if options.check(externalValue)
               return externalValue
 
-        # Look for generic conversion
-        if tryRead(options.read, options.readOptions)
-          if options.check(externalValue)
-            return externalValue
+          if options.types.length == 0
+            if options.check(externalValue)
+              externalValue = internalValue
+              return externalValue
 
-        if options.types.length == 0
-          if options.check(externalValue)
-            externalValue = internalValue
-            return externalValue
+          if options.type?
+            throw new TypeError("Unable to convert from internal type #{isAn(internalValue)} to external type #{options.type}")
+          else
+            throw new TypeError("Unable to convert from internal type #{isAn(internalValue)}")
+        catch ex
+          if ex instanceof TypeError
+            result.typeReadError(ex.message)
 
-        if options.type?
-          throw new TypeError("Unable to convert from internal type #{isAn(internalValue)} to external type #{options.type}")
-        else
-          throw new TypeError("Unable to convert from internal type #{isAn(internalValue)}")
+            if options.defaultFunc?
+              return options.defaultFunc()
+
+          throw ex
+        finally
+          if ex not instanceof TypeError
+            result.typeReadError(undefined)
 
       write: (externalValue) ->
         try
@@ -240,10 +267,14 @@
             throw new TypeError("Unable to convert from external type #{isAn(externalValue)}")
         catch ex
           if ex instanceof TypeError
-            result.typeError(ex.message)
+            result.typeWriteError(ex.message)
+
+            if options.noThrow
+              return
+
           throw ex
 
-        result.typeError(undefined)
+        result.typeWriteError(undefined)
     })
 
     result.typeName = options.type
@@ -251,14 +282,22 @@
     result.typeCheck = options.check
     result.typeChecks = options.checks
 
-    result.typeError = ko.observable()
+    result.typeReadError = ko.observable()
+    result.typeWriteError = ko.observable()
 
     if options.validate
       validate(result, options.message)
+
+    if options.pure and not options.deferEvaluation
+      # force immediate read
+      result()
 
     return result
 
   ko.extenders.convert.options = {
     validate: true
     message: undefined
+    noThrow: false
+    pure: true
+    deferEvaluation: true
   }

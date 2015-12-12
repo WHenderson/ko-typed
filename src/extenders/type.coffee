@@ -18,6 +18,9 @@
 
     options = ko.utils.extend(ko.utils.extend({}, ko.extenders.type.options), options)
 
+    if {}.hasOwnProperty.call(options, 'default')
+      options.defaultFunc = () -> options.default
+
     # Gather type names
     typeNames = typeNameToArray(options.type)
 
@@ -42,13 +45,27 @@
       return (value) ->
         _check(value) and ((typeNames.length == 0) or (typeNames.some((name) -> typeChecks[name](value))))
 
-    result = ko.pureComputed({
+    result = ko.computed({
+      pure: options.pure
+      deferEvaluation: options.deferEvaluation
+
       read: () ->
-        internalValue = target()
+        try
+          internalValue = target()
 
-        if not typeCheck(internalValue)
-          throw new TypeError("Unexpected internal type. Expected #{typeName}, got #{isAn(internalValue)}")
+          if not typeCheck(internalValue)
+            throw new TypeError("Unexpected internal type. Expected #{typeName}, got #{isAn(internalValue)}")
 
+        catch ex
+          if ex instanceof TypeError
+            result.typeReadError(ex.message)
+
+            if options.defaultFunc?
+              return options.defaultFunc()
+
+          throw ex
+
+        result.typeReadError(undefined)
         return internalValue
 
       write: (externalValue) ->
@@ -59,10 +76,14 @@
             throw new TypeError("Unexpected external type. Expected #{typeName}, received #{isAn(externalValue)}")
         catch ex
           if ex instanceof TypeError
-            result.typeError(ex.message)
+            result.typeWriteError(ex.message)
+
+            if options.noThrow
+              return
+
           throw ex
 
-        result.typeError(undefined)
+        result.typeWriteError(undefined)
     })
 
     result.typeName = typeName
@@ -70,15 +91,25 @@
     result.typeCheck = typeCheck
     result.typeChecks = typeChecks
 
-    result.typeError = ko.observable()
+    result.typeWriteError = ko.observable()
+    result.typeReadError = ko.observable()
 
     if options.validate
       validate(result, options.message)
+
+    if options.pure and not options.deferEvaluation
+      # force immediate read
+      result()
 
     return result
 
   ko.extenders.type.options = {
     validate: true
     message: undefined
+    noThrow: false
+    # default
+    # defaultFunc
+    pure: true
+    deferEvaluation: true
   }
 

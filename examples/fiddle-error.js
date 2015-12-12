@@ -8,9 +8,9 @@ var base = ko.observable();
 var typed = base.extend({ type: { type: 'Undefined|Number', message: 'ahhh snap' } }).extend({ validatable: true });
 
 typed.subscribe(function () { console.log('A typed:', typed()); });
-typed.typeError.subscribe(function () { console.log('B error:', typed.typeError()); });
+typed.typeWriteError.subscribe(function () { console.log('B error:', typed.typeWriteError()); });
 typed.subscribe(function () { console.log('C typed:', typed()); });
-typed.typeError.subscribe(function () { console.log('D error:', typed.typeError()); });
+typed.typeWriteError.subscribe(function () { console.log('D error:', typed.typeWriteError()); });
 
 try {
   typed('boom');
