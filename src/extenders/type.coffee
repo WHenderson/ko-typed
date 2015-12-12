@@ -18,7 +18,7 @@
 
     options = ko.utils.extend(ko.utils.extend({}, ko.extenders.type.options), options)
 
-    if {}.hasOwnProperty.call(options, 'default')
+    if options.useDefault and not options.defaultFunc?
       options.defaultFunc = () -> options.default
 
     # Gather type names
@@ -58,9 +58,9 @@
 
         catch ex
           if ex instanceof TypeError
-            result.typeReadError(ex.message)
+            result.typeReadError(ex)
 
-            if options.defaultFunc?
+            if options.useDefault
               return options.defaultFunc()
 
           throw ex
@@ -76,7 +76,7 @@
             throw new TypeError("Unexpected external type. Expected #{typeName}, received #{isAn(externalValue)}")
         catch ex
           if ex instanceof TypeError
-            result.typeWriteError(ex.message)
+            result.typeWriteError(ex)
 
             if options.noThrow
               return
@@ -94,8 +94,7 @@
     result.typeWriteError = ko.observable()
     result.typeReadError = ko.observable()
 
-    if options.validate
-      validate(result, options.message)
+    validate(result, options)
 
     if options.pure and not options.deferEvaluation
       # force immediate read
@@ -107,6 +106,7 @@
     validate: true
     message: undefined
     noThrow: false
+    useDefault: false
     # default
     # defaultFunc
     pure: true

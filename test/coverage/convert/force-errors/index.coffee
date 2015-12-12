@@ -58,6 +58,6 @@ suite('forced errors', () ->
     assert.isDefined(exWrite)
     assert.instanceOf(exWrite, TypeError)
     assert.equal(exWrite.message, 'Unable to convert from external type Number')
-    assert.strictEqual(convert.typeWriteError(), exWrite.message)
+    assert.strictEqual(convert.typeWriteError(), exWrite)
   )
 )

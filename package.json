@@ -43,7 +43,7 @@
     "gulp-umd": "git+https://github.com/WHenderson/gulp-umd.git",
     "gulp-util": "^3.0.6",
     "is-an": "^0.5.0",
-    "knockout": "^3.3.0",
+    "knockout": "^3.4.0",
     "knockout.validation": "^2.0.3",
     "lazypipe": "^1.0.1",
     "lodash": "^3.10.0",
@@ -52,6 +52,6 @@
   },
   "peerDependencies": {
     "is-an": "^0.5.0",
-    "knockout": "^3.3.0"
+    "knockout": "^3.4.0"
   }
 }

@@ -20,10 +20,9 @@
         defaultFunc: options.defaultFunc
       }
 
-      if {}.hasOwnProperty.call(options, 'default')
+      if finalOptions.useDefault and not options.defaultFunc?
+        finalOptions.useDefault = true
         finalOptions.default = options.default
-
-      if {}.hasOwnProperty.call(finalOptions, 'default')
         finalOptions.defaultFunc = () -> finalOptions.default
 
       finalOptions.checkers.push(finalOptions.checkSelf)
@@ -178,9 +177,9 @@
             throw new TypeError("Unable to convert from internal type #{isAn(internalValue)}")
         catch ex
           if ex instanceof TypeError
-            result.typeReadError(ex.message)
+            result.typeReadError(ex)
 
-            if options.defaultFunc?
+            if options.useDefault
               return options.defaultFunc()
 
           throw ex
@@ -267,7 +266,7 @@
             throw new TypeError("Unable to convert from external type #{isAn(externalValue)}")
         catch ex
           if ex instanceof TypeError
-            result.typeWriteError(ex.message)
+            result.typeWriteError(ex)
 
             if options.noThrow
               return
@@ -285,8 +284,7 @@
     result.typeReadError = ko.observable()
     result.typeWriteError = ko.observable()
 
-    if options.validate
-      validate(result, options.message)
+    validate(result, options)
 
     if options.pure and not options.deferEvaluation
       # force immediate read

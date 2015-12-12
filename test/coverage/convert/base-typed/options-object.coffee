@@ -116,4 +116,38 @@ suite('object', () ->
     base(undefined)
     assert.strictEqual(convert(), undefined)
   )
+
+  test('knockout-validation', () ->
+    require('knockout.validation')
+
+    typed = ko.observable().extend({
+      type: {
+        type: 'Number'
+        default: 42
+        useDefault: true
+        noThrow: true
+        deferEvaluation: false
+      }
+    }).extend({
+      validatable: true
+    })
+
+    assert.equal(typed.error(), 'Unexpected internal type. Expected Number, got Undefined')
+
+    typed = ko.observable().extend({
+      type: {
+        type: 'Number'
+        default: 42
+        useDefault: true
+        noThrow: true
+        deferEvaluation: false
+        message: 'invalid value'
+      }
+    }).extend({
+      validatable: true
+    })
+
+    assert.equal(typed.error(), 'invalid value')
+
+  )
 )
