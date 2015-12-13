@@ -3,7 +3,7 @@ assert = require('chai').assert
 suite('moment', () ->
 
   test('Moment -> Undefined', () ->
-    converter = ko.typeRestricted.getConverter('Moment', 'Undefined')
+    converter = ko.typed.getConverter('Moment', 'Undefined')
     moment = require('moment')
 
     assert.isDefined(converter)
@@ -16,7 +16,7 @@ suite('moment', () ->
   )
 
   test('Moment -> String', () ->
-    converter = ko.typeRestricted.getConverter('Moment', 'String')
+    converter = ko.typed.getConverter('Moment', 'String')
     moment = require('moment')
 
     m = moment('1995-12-17T03:24:00')
@@ -28,7 +28,7 @@ suite('moment', () ->
   )
 
   test('Moment -> Date', () ->
-    converter = ko.typeRestricted.getConverter('Moment', 'Date')
+    converter = ko.typed.getConverter('Moment', 'Date')
     moment = require('moment')
 
     m = moment('1995-12-17T03:24:00')

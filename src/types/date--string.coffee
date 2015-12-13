@@ -1,4 +1,4 @@
-  ko.typeRestricted.addConverter(
+  ko.typed.addConverter(
     'Date'
     'String'
     (value, options) ->

@@ -1,4 +1,4 @@
-  ko.typeRestricted.addConverter(
+  ko.typed.addConverter(
     'String',
     'Number.Integer',
     (value, options) ->
@@ -7,7 +7,7 @@
 
       if options.base == 10 and not options.strict
         try
-          return ko.typeRestricted.getConverter('String', 'Number')(value, 0)
+          return ko.typed.getConverter('String', 'Number')(value, 0)
         catch ex
           throw new TypeError("Unable to convert from #{value} to Number.Integer")
 

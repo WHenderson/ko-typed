@@ -151,7 +151,7 @@
 
               # try default conversion
               if not options.ignoreDefaultConverters
-                if tryRead(ko.typeRestricted.getConverter(intTypeName, extTypeName), intTypeOptions.readOptions)
+                if tryRead(ko.typed.getConverter(intTypeName, extTypeName), intTypeOptions.readOptions)
                   if intTypeOptions.check(externalValue)
                     return externalValue
 
@@ -240,7 +240,7 @@
 
               # try default conversion
               if not options.ignoreDefaultConverters
-                if tryWrite(ko.typeRestricted.getConverter(extTypeName, intTypeName), intTypeOptions.writeOptions)
+                if tryWrite(ko.typed.getConverter(extTypeName, intTypeName), intTypeOptions.writeOptions)
                   return
 
           # Look for one-sided conversion

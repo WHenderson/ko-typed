@@ -1,4 +1,4 @@
-  ko.typeRestricted.addConverter(
+  ko.typed.addConverter(
     'Boolean'
     'Number.Integer'
     (value, options) ->

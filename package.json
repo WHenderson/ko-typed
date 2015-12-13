@@ -1,20 +1,20 @@
 {
-  "name": "ko-type-restricted",
+  "name": "ko-typed",
   "author": "Will Henderson <whenderson.github@gmail.com> (https://github.com/WHenderson)",
   "version": "0.2.0",
-  "description": "Robust and comprehensive type checking library for node and the browser",
+  "description": "ko-typed provides observable extensions for restricting and converting observable values based on type",
   "keywords": [
     "type",
     "checking"
   ],
   "bugs": {
-    "url": "https://github.com/WHenderson/ko-type-restricted/issues"
+    "url": "https://github.com/WHenderson/ko-typed/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WHenderson/ko-type-restricted.git"
+    "url": "git+https://github.com/WHenderson/ko-typed.git"
   },
-  "homepage": "https://github.com/WHenderson/ko-type-restricted#readme",
+  "homepage": "https://github.com/WHenderson/ko-typed#readme",
   "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/gulp test",

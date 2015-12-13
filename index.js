@@ -1,1 +1,1 @@
-module.exports = require('./dist/ko-type-restricted.apply.node.js');
+module.exports = require('./dist/ko-typed.apply.node.js');

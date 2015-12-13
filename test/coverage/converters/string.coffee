@@ -3,7 +3,7 @@ assert = require('chai').assert
 suite('string', () ->
 
   test('String -> Undefined', () ->
-    converter = ko.typeRestricted.getConverter('String', 'Undefined')
+    converter = ko.typed.getConverter('String', 'Undefined')
 
     assert.isDefined(converter)
     assert.strictEqual(converter(''), undefined)
@@ -15,7 +15,7 @@ suite('string', () ->
   )
 
   test('String -> Boolean', () ->
-    converter = ko.typeRestricted.getConverter('String', 'Boolean')
+    converter = ko.typed.getConverter('String', 'Boolean')
 
     assert.isDefined(converter)
 
@@ -54,7 +54,7 @@ suite('string', () ->
   )
 
   test('String -> Number', () ->
-    converter = ko.typeRestricted.getConverter('String', 'Number')
+    converter = ko.typed.getConverter('String', 'Number')
 
     assert.isDefined(converter)
 
@@ -72,7 +72,7 @@ suite('string', () ->
   )
 
   test('String -> Number.Integer', () ->
-    converter = ko.typeRestricted.getConverter('String', 'Number.Integer')
+    converter = ko.typed.getConverter('String', 'Number.Integer')
 
     assert.isDefined(converter)
 
@@ -95,7 +95,7 @@ suite('string', () ->
   )
 
   test('String -> Date', () ->
-    converter = ko.typeRestricted.getConverter('String', 'Date')
+    converter = ko.typed.getConverter('String', 'Date')
 
     assert.isDefined(converter)
 
@@ -111,7 +111,7 @@ suite('string', () ->
   )
 
   test('String -> Moment', () ->
-    converter = ko.typeRestricted.getConverter('String', 'Moment')
+    converter = ko.typed.getConverter('String', 'Moment')
     moment = require('moment')
 
     assert.isDefined(converter)

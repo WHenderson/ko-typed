@@ -5,7 +5,7 @@ suite('coverage', () ->
   setup(() ->
     # Use compiled javascript for debugging
     if typeof v8debug != 'object'
-      global.ko = require('../dist/ko-type-restricted.apply.coffee')(require('knockout'))
+      global.ko = require('../dist/ko-typed.apply.coffee')(require('knockout'))
     else
       global.ko = require('../index.js')(require('knockout'))
 

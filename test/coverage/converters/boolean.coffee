@@ -2,7 +2,7 @@ assert = require('chai').assert
 
 suite('boolean', () ->
   test('Boolean -> String', () ->
-    converter = ko.typeRestricted.getConverter('Boolean', 'String')
+    converter = ko.typed.getConverter('Boolean', 'String')
 
     assert.isDefined(converter)
     assert.strictEqual(converter(true), 'true')
@@ -11,7 +11,7 @@ suite('boolean', () ->
   )
 
   test('Boolean -> Number', () ->
-    converter = ko.typeRestricted.getConverter('Boolean', 'Number')
+    converter = ko.typed.getConverter('Boolean', 'Number')
 
     assert.isDefined(converter)
     assert.strictEqual(converter(true), 1)
@@ -21,7 +21,7 @@ suite('boolean', () ->
   )
 
   test('Boolean -> Number.Integer', () ->
-    converter = ko.typeRestricted.getConverter('Boolean', 'Number.Integer')
+    converter = ko.typed.getConverter('Boolean', 'Number.Integer')
 
     assert.isDefined(converter)
     assert.strictEqual(converter(true), 1)

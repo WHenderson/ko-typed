@@ -1,9 +1,9 @@
-  ko.typeRestricted = {}
+  ko.typed = {}
 
   do ->
-    ko.typeRestricted._converters = converters = {}
+    ko.typed._converters = converters = {}
 
-    ko.typeRestricted.addConverter = (fromTypeName, toTypeName, converter, defaultOptions, defaultOption) ->
+    ko.typed.addConverter = (fromTypeName, toTypeName, converter, defaultOptions, defaultOption) ->
       console?.assert?(isValidTypeName(fromTypeName), "Invalid typeName #{fromTypeName}")
       console?.assert?(isValidTypeName(toTypeName), "Invalid typeName #{fromTypeName}")
 
@@ -28,16 +28,16 @@
       converters[fromTypeName] ?= {}
       converters[fromTypeName][toTypeName] = wrapper
 
-      return ko.typeRestricted
+      return ko.typed
 
-    ko.typeRestricted.getConverter = (fromTypeName, toTypeName) ->
+    ko.typed.getConverter = (fromTypeName, toTypeName) ->
       converters[fromTypeName]?[toTypeName]
 
-    ko.typeRestricted.removeConverter = (fromTypeName, toTypeName) ->
+    ko.typed.removeConverter = (fromTypeName, toTypeName) ->
       if converters[fromTypeName]?[toTypeName]?
         delete converters[fromTypeName]?[toTypeName]
 
-      return ko.typeRestricted
+      return ko.typed
 
     return
 

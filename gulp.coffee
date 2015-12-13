@@ -118,7 +118,7 @@ gulpBuild = () ->
     'src/types/*.coffee'
     'src/index.end.coffee'
   ])
-  .pipe(gConcat('ko-type-restricted.apply.coffee', { newLine: '\r\n' }))
+  .pipe(gConcat('ko-typed.apply.coffee', { newLine: '\r\n' }))
   .pipe(gData((file) ->
     {
       exports: 'applyKotr'
@@ -142,7 +142,7 @@ gulpBuild = () ->
       .pipe(() -> gAddSrc.append([
         'src/apply.coffee'
       ]))
-      .pipe(() -> gConcat('ko-type-restricted.applied.coffee', { newLine: '\r\n' }))
+      .pipe(() -> gConcat('ko-typed.applied.coffee', { newLine: '\r\n' }))
       .pipe(() -> gData((file) ->
         {
           exports: 'ko'
@@ -271,12 +271,12 @@ gulp.task('dist-git', ['dist-version'], (cb) ->
   cfgNpm = require('./package.json')
 
   exec('git add bower.json')
-  exec('git add -f dist/ko-type-restricted.coffee')
-  exec('git add -f dist/ko-type-restricted.node.js')
-  exec('git add -f dist/ko-type-restricted.umd.js')
-  exec('git add -f dist/ko-type-restricted.umd.min.js')
-  exec('git add -f dist/ko-type-restricted.web.js')
-  exec('git add -f dist/ko-type-restricted.web.min.js')
+  exec('git add -f dist/ko-typed.coffee')
+  exec('git add -f dist/ko-typed.node.js')
+  exec('git add -f dist/ko-typed.umd.js')
+  exec('git add -f dist/ko-typed.umd.min.js')
+  exec('git add -f dist/ko-typed.web.js')
+  exec('git add -f dist/ko-typed.web.min.js')
   exec('git checkout head')
   exec("git commit -m \"Version #{cfgNpm.version} for distribution\"")
   exec("git tag -a v#{cfgNpm.version} -m \"Add tag v#{cfgNpm.version}\"")

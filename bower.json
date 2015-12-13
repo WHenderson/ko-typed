@@ -1,14 +1,14 @@
 {
-  "name": "ko-type-restricted",
+  "name": "ko-typed",
   "main": [
-    "lib/ko-type-restricted.coffee",
-    "lib/ko-type-restricted-node.js",
-    "lib/ko-type-restricted-umd.js",
-    "lib/ko-type-restricted-umd.min.js",
-    "lib/ko-type-restricted-web.js",
-    "lib/ko-type-restricted-web.min.js"
+    "lib/ko-typed.coffee",
+    "lib/ko-typed-node.js",
+    "lib/ko-typed-umd.js",
+    "lib/ko-typed-umd.min.js",
+    "lib/ko-typed-web.js",
+    "lib/ko-typed-web.min.js"
   ],
-  "homepage": "https://github.com/WHenderson/ko-type-restricted",
+  "homepage": "https://github.com/WHenderson/ko-typed",
   "authors": [
     "WHenderson <whenderson.github@gmail.com>"
   ],

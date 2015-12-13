@@ -1,33 +1,33 @@
-# ko-type-restricted
+# ko-typed
 
-ko-type-restricted provides observable extensions for restricting and converting observable values based on type.
+ko-typed provides observable extensions for restricting and converting observable values based on type.
 
-[![Build Status](https://travis-ci.org/WHenderson/ko-type-restricted.svg?branch=master)](https://travis-ci.org/WHenderson/ko-type-restricted)
-[![Coverage Status](https://coveralls.io/repos/WHenderson/ko-type-restricted/badge.svg?branch=master&service=github)](https://coveralls.io/github/WHenderson/ko-type-restricted?branch=master)
+[![Build Status](https://travis-ci.org/WHenderson/ko-typed.svg?branch=master)](https://travis-ci.org/WHenderson/ko-typed)
+[![Coverage Status](https://coveralls.io/repos/WHenderson/ko-typed/badge.svg?branch=master&service=github)](https://coveralls.io/github/WHenderson/ko-typed?branch=master)
 
 ## Installation
 
 ### Node
-    npm install ko-type-restricted
+    npm install ko-typed
 
 ### Web
-    bower install ko-type-restricted
+    bower install ko-typed
 
 ## Usage
 
-`ko-type-restricted` comes in two flavours - `.apply` and `.applied`.
+`ko-typed` comes in two flavours - `.apply` and `.applied`.
 
 ### `.apply`
-`ko-type-restricted.apply` provides a method which will extend the provided knockout instance with the `ko-type-restricted` api.
+`ko-typed.apply` provides a method which will extend the provided knockout instance with the `ko-typed` api.
 This is the default for nodejs.
 
 ### `.applied`
-`ko-type-restricted.applied` attempts to resolve the default knockout instance and extend it directly with the `ko-type-restricted` api.
+`ko-typed.applied` attempts to resolve the default knockout instance and extend it directly with the `ko-typed` api.
 This is the preferred version to used for AMD.
 
 ### node
 ```js
-var ko = require('ko-type-restricted')(require('knockout'));
+var ko = require('ko-typed')(require('knockout'));
 
 var typed = ko.observable().extend({ type: 'Undefined|Number' })
 var convert = typed.extend({ convert: 'String' })
@@ -38,7 +38,7 @@ var convert = typed.extend({ convert: 'String' })
 <html>
     <head>
         <script type="text/javascript" src="knockout.js"></script>
-        <script type="text/javascript" src="ko-type-restricted.applied.web.min.js"></script>
+        <script type="text/javascript" src="ko-typed.applied.web.min.js"></script>
     </head>
     <body>
         <script>
@@ -54,10 +54,10 @@ var convert = typed.extend({ convert: 'String' })
 require.config({
     paths: {
         "knockout": ...,
-        "ko-type-restricted": "ko-type-restricted.applied.web.min.js"
+        "ko-typed": "ko-typed.applied.web.min.js"
     }
 });
-require(['ko-type-restricted'], function (ko) {
+require(['ko-typed'], function (ko) {
     var typed = ko.observable().extend({ type: 'Undefined|Number' })
     var convert = typed.extend({ convert: 'String' })
 });

@@ -33,7 +33,7 @@ suite('number', () ->
   )
 
   test('Number -> String', () ->
-    converter = ko.typeRestricted.getConverter('Number', 'String')
+    converter = ko.typed.getConverter('Number', 'String')
 
     assert.isDefined(converter)
     assert.strictEqual(converter(0), '0')
@@ -53,7 +53,7 @@ suite('number', () ->
   )
 
   test('Number -> Boolean', () ->
-    converter = ko.typeRestricted.getConverter('Number', 'Boolean')
+    converter = ko.typed.getConverter('Number', 'Boolean')
 
     assert.isDefined(converter)
     assert.strictEqual(converter(0), false)
@@ -70,7 +70,7 @@ suite('number', () ->
   )
 
   test('Number -> Number.Integer', () ->
-    converter = ko.typeRestricted.getConverter('Number', 'Number.Integer')
+    converter = ko.typed.getConverter('Number', 'Number.Integer')
 
     assert.isDefined(converter)
     assert.strictEqual(converter(20.49), 20)
