@@ -1,7 +1,7 @@
 {
   "name": "ko-typed",
   "author": "Will Henderson <whenderson.github@gmail.com> (https://github.com/WHenderson)",
-  "version": "0.2.0",
+  "version": "0.5.0-beta",
   "description": "ko-typed provides observable extensions for restricting and converting observable values based on type",
   "keywords": [
     "type",
