@@ -271,12 +271,7 @@ gulp.task('dist-git', ['dist-version'], (cb) ->
   cfgNpm = require('./package.json')
 
   exec('git add bower.json')
-  exec('git add -f dist/ko-typed.coffee')
-  exec('git add -f dist/ko-typed.node.js')
-  exec('git add -f dist/ko-typed.umd.js')
-  exec('git add -f dist/ko-typed.umd.min.js')
-  exec('git add -f dist/ko-typed.web.js')
-  exec('git add -f dist/ko-typed.web.min.js')
+  exec('git add -f dist/**/*')
   exec('git checkout head')
   exec("git commit -m \"Version #{cfgNpm.version} for distribution\"")
   exec("git tag -a v#{cfgNpm.version} -m \"Add tag v#{cfgNpm.version}\"")
