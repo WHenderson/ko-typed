@@ -3,6 +3,9 @@ util = require('util')
 
 suite('coverage', () ->
   setup(() ->
+    # give the code coverage tool time to work
+    @timeout(10000)
+
     # Use compiled javascript for debugging
     if typeof v8debug != 'object'
       global.ko = require('../dist/ko-typed.apply.coffee')(require('knockout'))
