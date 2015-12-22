@@ -16,7 +16,8 @@
         check: options
       }
 
-    options = ko.utils.extend(ko.utils.extend({}, ko.extenders.type.options), options)
+    options = extend({}, ko.typed.options, ko.extenders.type.options, options)
+    options.validation = extend({}, ko.typed.options.validation, ko.extenders.type.options.validation, options.validation)
 
     if options.useDefault and not options.defaultFunc?
       options.defaultFunc = () -> options.default
@@ -47,7 +48,7 @@
 
     result = ko.computed({
       pure: options.pure
-      deferEvaluation: options.deferEvaluation
+      deferEvaluation: true
 
       read: () ->
         try
@@ -94,22 +95,20 @@
     result.typeWriteError = ko.observable()
     result.typeReadError = ko.observable()
 
-    validate(result, options)
+    validate(target, result, options)
 
-    if options.pure and not options.deferEvaluation
-      # force immediate read
-      result()
+    if not options.deferEvaluation
+      try
+        result()
+
+        if result.typeReadError()?
+          result.typeReadError.valueHasMutated()
+      catch ex
+        result.dispose()
+        throw ex
 
     return result
 
   ko.extenders.type.options = {
-    validate: true
-    message: undefined
-    noThrow: false
-    useDefault: false
-    # default
-    # defaultFunc
-    pure: true
-    deferEvaluation: true
   }
 

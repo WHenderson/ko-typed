@@ -1,5 +1,3 @@
-  ko.typed = {}
-
   do ->
     ko.typed._converters = converters = {}
 

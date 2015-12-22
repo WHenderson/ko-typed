@@ -1,2 +1,3 @@
 applyKotr = (ko) ->
+  ko.typed = {}
 

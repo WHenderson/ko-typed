@@ -5,7 +5,7 @@
         options = { type: options }
 
       # merge options
-      options = ko.utils.extend(ko.utils.extend({}, ko.extenders.convert.options), options)
+      options = extend({}, ko.typed.options, ko.extenders.convert.options, options)
 
       finalOptions = {
         checkSelf: options.check ? () -> true
@@ -19,8 +19,9 @@
         deferEvaluation: options.deferEvaluation
         defaultFunc: options.defaultFunc
         noThrow: options.noThrow
-        message: options.message
         useDefault: options.useDefault
+        validate: options.validate
+        validation: extend({}, ko.typed.options.validation, ko.extenders.convert.options.validation, options.validation)
       }
 
       if finalOptions.useDefault and not options.defaultFunc?
@@ -90,7 +91,7 @@
 
     result = ko.computed({
       pure: options.pure
-      deferEvaluation: options.deferEvaluation
+      deferEvaluation: true
 
       read: () ->
         try
@@ -287,18 +288,20 @@
     result.typeReadError = ko.observable()
     result.typeWriteError = ko.observable()
 
-    validate(result, options)
+    validate(target, result, options)
 
-    if options.pure and not options.deferEvaluation
-      # force immediate read
-      result()
+    if not options.deferEvaluation
+      try
+        result()
+
+        if result.typeReadError()?
+          result.typeReadError.valueHasMutated()
+      catch ex
+        result.dispose()
+        throw ex
 
     return result
 
   ko.extenders.convert.options = {
-    validate: true
-    message: undefined
-    noThrow: false
-    pure: true
-    deferEvaluation: true
   }
+

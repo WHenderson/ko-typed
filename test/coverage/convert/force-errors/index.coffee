@@ -9,6 +9,7 @@ suite('forced errors', () ->
           throw new Error('Fail Read')
         write: (value) ->
           throw new Error('Fail Write')
+        validate: false
       }
     })
 
@@ -36,6 +37,7 @@ suite('forced errors', () ->
       convert: {
         check: (value) ->
           false
+        validate: false
       }
     })
 
@@ -68,7 +70,7 @@ suite('forced errors', () ->
   )
 
   test('bad write, no throw', () ->
-    typed = ko.observable().extend({ convert: {
+    typed = ko.observable(10).extend({ convert: {
       type: 'Number',
       noThrow: true
     } })
@@ -84,6 +86,7 @@ suite('forced errors', () ->
       type: 'Undefined',
       check: () ->
         throw new Error('not a type error')
+      validate: false
     } })
 
     assert.throws(

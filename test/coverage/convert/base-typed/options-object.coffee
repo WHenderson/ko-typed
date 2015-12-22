@@ -120,6 +120,7 @@ suite('object', () ->
   test('knockout-validation', () ->
     require('knockout.validation')
 
+    debugger
     typed = ko.observable().extend({
       type: {
         type: 'Number'
@@ -141,7 +142,9 @@ suite('object', () ->
         useDefault: true
         noThrow: true
         deferEvaluation: false
-        message: 'invalid value'
+        validation: {
+          message: 'invalid value'
+        }
       }
     }).extend({
       validatable: true
