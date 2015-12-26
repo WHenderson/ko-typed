@@ -123,13 +123,18 @@ suite('object', () ->
     typed = ko.observable().extend({
       type: {
         type: 'Number'
-        default: 42
-        useDefault: true
-        noThrow: true
+        exRead: {
+          useDefault: true
+          defaultValue: 42
+        }
+        exWrite: {
+          noThrow: true
+        }
         deferEvaluation: false
+        validation: {
+          enable: true
+        }
       }
-    }).extend({
-      validatable: true
     })
 
     assert.equal(typed.error(), 'Unexpected internal type. Expected Number, got Undefined')
@@ -137,16 +142,19 @@ suite('object', () ->
     typed = ko.observable().extend({
       type: {
         type: 'Number'
-        default: 42
-        useDefault: true
-        noThrow: true
+        exRead: {
+          useDefault: true
+          defaultValue: 42
+        }
+        exWrite: {
+          noThrow: true
+        }
         deferEvaluation: false
         validation: {
+          enable: true
           message: 'invalid value'
         }
       }
-    }).extend({
-      validatable: true
     })
 
     assert.equal(typed.error(), 'invalid value')

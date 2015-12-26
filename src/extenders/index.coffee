@@ -2,7 +2,7 @@
     # validation options
     validation: {
       # turn validation on/off
-      enabled: true
+      enable: true
 
       # validate on read
       read: true
@@ -28,7 +28,8 @@
       catch: true
 
       # default catch function to use when catch is true
-      catchFunc: (ex) -> ex instanceof TypeError
+      catchTrue: (ex) -> ex instanceof TypeError
+      catchFalse: () -> false
 
       # Do not throw exceptions when reading. Use default value/func instead
       useDefault: false
@@ -44,7 +45,7 @@
       catch: true
 
       # default catch function to use when catch is true
-      catchFunc: (ex) -> ex instanceof TypeError
+      catchTrue: (ex) -> ex instanceof TypeError
 
       # Do not throw exceptions when writing
       noThrow: false
@@ -76,9 +77,9 @@
 
     # force catch to be a function
     if opt.catch == true
-      opt.catch = opt.catchFunc ? () -> true
+      opt.catch = opt.catchTrue
     else if opt.catch == false
-      opt.catch = () -> false
+      opt.catch = opt.catchFalse
 
     # force defaultFunc
     if opt.useDefault and not opt.defaultFunc?
@@ -139,7 +140,7 @@
           writeError(undefined)
 
   validate = (target, result, options) ->
-    if not options.validate
+    if not options.validation.enable
       return
 
     validation = options.validation
@@ -149,11 +150,11 @@
 
     if ko.validation?
       if options.validation.read and options.validation.write
-        message = () -> result.typeWriteError()?.message ? result.typeReadError()?.message
+        message = () -> result.writeError()?.message ? result.readError()?.message
       else if options.validation.read
-        message = () -> result.typeReadError()?.message
+        message = () -> result.readError()?.message
       else #if options.validation.write
-        message = () -> result.typeWriteError()?.message
+        message = () -> result.writeError()?.message
 
       applyValidation = (base) ->
         base.extend({ validatable: { enable: true, deferEvaluation: options.deferEvaluation } })
@@ -161,8 +162,13 @@
         rule = {
           message: undefined
           validator: () ->
-            rule.message = message()
-            return not rule.message?
+            m = message()
+            if not m?
+              rule.message = undefined
+              return true
+            else
+              rule.message = validation.message ? m
+              return false
         }
 
         ko.validation.addAnonymousRule(base, rule)

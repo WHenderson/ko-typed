@@ -91,7 +91,6 @@ suite('object', () ->
   )
 
   test('bad write, no throw', () ->
-    debugger
     typed = ko.observable().extend({ type: {
       type: 'Number',
       exWrite: {

@@ -7,7 +7,7 @@
       # merge options
       options = extend({}, ko.typed.options, ko.extenders.convert.options, options)
 
-      finalOptions = {
+      normal = {
         checkSelf: options.check ? () -> true
         read: options.read
         write: options.write
@@ -17,44 +17,39 @@
         ignoreDefaultConverters: options.ignoreDefaultConverters
         pure: options.pure
         deferEvaluation: options.deferEvaluation
-        defaultFunc: options.defaultFunc
-        noThrow: options.noThrow
-        useDefault: options.useDefault
-        validate: options.validate
-        validation: extend({}, ko.typed.options.validation, ko.extenders.convert.options.validation, options.validation)
       }
 
-      if finalOptions.useDefault and not options.defaultFunc?
-        finalOptions.default = options.default
-        finalOptions.defaultFunc = () -> finalOptions.default
+      normalizeExRead(normal, ko.typed.options, ko.extenders.convert.options, options)
+      normalizeExWrite(normal, ko.typed.options, ko.extenders.convert.options, options)
+      normalizeValidation(normal, ko.typed.options, ko.extenders.convert.options, options)
 
-      finalOptions.checkers.push(finalOptions.checkSelf)
+      normal.checkers.push(normal.checkSelf)
 
       # Gather all external types
-      finalOptions.types = typeNameToArray(options.type)
+      normal.types = typeNameToArray(options.type)
       for own extTypeName of options
         if not isValidTypeName(extTypeName)
           continue
 
         # Add external type
-        if finalOptions.types.indexOf(extTypeName) == -1
-          finalOptions.types.push(extTypeName)
+        if normal.types.indexOf(extTypeName) == -1
+          normal.types.push(extTypeName)
 
       # Expand each External Type
-      for extTypeName in finalOptions.types
+      for extTypeName in normal.types
         extTypeOptions = options[extTypeName] ? {}
 
-        finalOptions[extTypeName] = {
+        normal[extTypeName] = {
           checkSelf: extTypeOptions.check ? isAn(extTypeName, { returnChecker: true }) ? () -> true
           read: extTypeOptions.read
           write: extTypeOptions.write
           types: typeNameToArray(extTypeOptions.type)
         }
 
-        checkParent = finalOptions.checkSelf
-        finalOptions.checkers.push(finalOptions[extTypeName].checkSelf)
-        finalOptions.checks[extTypeName] = finalOptions[extTypeName].check = do (extTypeName) ->
-          (value) -> finalOptions.checkSelf(value) and finalOptions[extTypeName].checkSelf(value)
+        checkParent = normal.checkSelf
+        normal.checkers.push(normal[extTypeName].checkSelf)
+        normal.checks[extTypeName] = normal[extTypeName].check = do (extTypeName) ->
+          (value) -> normal.checkSelf(value) and normal[extTypeName].checkSelf(value)
 
         # Gather all internal types
         for own intTypeName of extTypeOptions
@@ -62,39 +57,46 @@
             continue
 
           # Add internal type
-          if finalOptions[extTypeName].types.indexOf(intTypeName) == -1
-            finalOptions[extTypeName].types.push(intTypeName)
+          if normal[extTypeName].types.indexOf(intTypeName) == -1
+            normal[extTypeName].types.push(intTypeName)
 
         # Expand all internal types
-        for intTypeName in finalOptions[extTypeName].types
+        for intTypeName in normal[extTypeName].types
           intTypeOptions = options[extTypeName]?[intTypeName] ? {}
 
-          finalOptions[extTypeName][intTypeName] = {
+          normal[extTypeName][intTypeName] = {
             checkSelf: intTypeOptions.check
             read: intTypeOptions.read
             write: intTypeOptions.write
           }
 
-          if not finalOptions[extTypeName][intTypeName].checkSelf?
-            finalOptions[extTypeName][intTypeName].check = finalOptions[extTypeName][intTypeName].checkSelf = finalOptions[extTypeName].checkSelf
+          if not normal[extTypeName][intTypeName].checkSelf?
+            normal[extTypeName][intTypeName].check = normal[extTypeName][intTypeName].checkSelf = normal[extTypeName].checkSelf
           else
-            finalOptions[extTypeName][intTypeName].check = do (extTypeName, intTypeName) ->
-              (value) -> finalOptions[extTypeName].check(value) and finalOptions[extTypeName][intTypeName].checkSelf(value)
+            normal[extTypeName][intTypeName].check = do (extTypeName, intTypeName) ->
+              (value) -> normal[extTypeName].check(value) and normal[extTypeName][intTypeName].checkSelf(value)
 
-        finalOptions[extTypeName].type = typeNameToString(finalOptions[extTypeName].types)
+        normal[extTypeName].type = typeNameToString(normal[extTypeName].types)
 
-      finalOptions.type = typeNameToString(finalOptions.types)
-      finalOptions.check = (value) ->
-        finalOptions.checkSelf(value) and ((finalOptions.checkers.length == 0) or finalOptions.checkers.some((checker) -> checker(value)))
+      normal.type = typeNameToString(normal.types)
+      normal.check = (value) ->
+        normal.checkSelf(value) and ((normal.checkers.length == 0) or normal.checkers.some((checker) -> checker(value)))
 
-      options = finalOptions
+      options = normal
+
+
+    readError = ko.observable()
+    writeError = ko.observable()
 
     result = ko.computed({
       pure: options.pure
       deferEvaluation: true
 
-      read: () ->
-        try
+      read: wrapRead(
+        options,
+        target,
+        readError,
+        () ->
           internalValue = target()
           externalValue = undefined
 
@@ -178,20 +180,13 @@
             throw new TypeError("Unable to convert from internal type #{isAn(internalValue)} to external type #{options.type}")
           else
             throw new TypeError("Unable to convert from internal type #{isAn(internalValue)}")
-        catch ex
-          if ex instanceof TypeError
-            result.typeReadError(ex)
+      )
 
-            if options.useDefault
-              return options.defaultFunc()
-
-          throw ex
-        finally
-          if not ex?
-            result.typeReadError(undefined)
-
-      write: (externalValue) ->
-        try
+      write: wrapWrite(
+        options,
+        target,
+        writeError,
+        (externalValue) ->
           tryWrite = (convert, options) ->
             if convert?
               try
@@ -267,17 +262,7 @@
             throw new TypeError("Unable to convert from external type #{isAn(externalValue)} to internal type #{target.typeName}")
           else
             throw new TypeError("Unable to convert from external type #{isAn(externalValue)}")
-        catch ex
-          if ex instanceof TypeError
-            result.typeWriteError(ex)
-
-            if options.noThrow
-              return
-
-          throw ex
-        finally
-          if not ex?
-            result.typeWriteError(undefined)
+      )
     })
 
     result.typeName = options.type
@@ -285,17 +270,14 @@
     result.typeCheck = options.check
     result.typeChecks = options.checks
 
-    result.typeReadError = ko.observable()
-    result.typeWriteError = ko.observable()
+    result.readError = readError
+    result.writeError = writeError
 
     validate(target, result, options)
 
     if not options.deferEvaluation
       try
         result()
-
-        if result.typeReadError()?
-          result.typeReadError.valueHasMutated()
       catch ex
         result.dispose()
         throw ex

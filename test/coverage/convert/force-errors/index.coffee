@@ -3,13 +3,16 @@ assert = require('chai').assert
 suite('forced errors', () ->
   test('failed read conversion', () ->
     base = ko.observable()
+    debugger
     convert = base.extend({
       convert: {
         read: (value) ->
           throw new Error('Fail Read')
         write: (value) ->
           throw new Error('Fail Write')
-        validate: false
+        validation: {
+          enable: false
+        }
       }
     })
 
@@ -20,7 +23,7 @@ suite('forced errors', () ->
     assert.isDefined(exRead)
     assert.instanceOf(exRead, Error)
     assert.equal(exRead.message, 'Fail Read')
-    assert.equal(convert.typeWriteError(), undefined)
+    assert.equal(convert.writeError(), undefined)
 
     try
       convert(10)
@@ -37,11 +40,13 @@ suite('forced errors', () ->
       convert: {
         check: (value) ->
           false
-        validate: false
+        validation: {
+          enable: false
+        }
       }
     })
 
-    assert.strictEqual(convert.typeWriteError(), undefined)
+    assert.strictEqual(convert.writeError(), undefined)
 
     try
       convert()
@@ -50,7 +55,7 @@ suite('forced errors', () ->
     assert.isDefined(exRead)
     assert.instanceOf(exRead, TypeError)
     assert.equal(exRead.message, 'Unable to convert from internal type Undefined')
-    assert.strictEqual(convert.typeWriteError(), undefined)
+    assert.strictEqual(convert.writeError(), undefined)
 
     try
       convert(10)
@@ -59,7 +64,7 @@ suite('forced errors', () ->
     assert.isDefined(exWrite)
     assert.instanceOf(exWrite, TypeError)
     assert.equal(exWrite.message, 'Unable to convert from external type Number')
-    assert.strictEqual(convert.typeWriteError(), exWrite)
+    assert.strictEqual(convert.writeError(), exWrite)
   )
 
   test('immediate check and failure', () ->
@@ -72,13 +77,15 @@ suite('forced errors', () ->
   test('bad write, no throw', () ->
     typed = ko.observable(10).extend({ convert: {
       type: 'Number',
-      noThrow: true
+      exWrite:{
+        noThrow: true
+      }
     } })
 
     typed('not a number')
 
-    assert.instanceOf(typed.typeWriteError(), TypeError)
-    assert.strictEqual(typed.typeWriteError().message, 'Unable to convert from external type String')
+    assert.instanceOf(typed.writeError(), TypeError)
+    assert.strictEqual(typed.writeError().message, 'Unable to convert from external type String')
   )
 
   test('forced failure', () ->
@@ -86,32 +93,36 @@ suite('forced errors', () ->
       type: 'Undefined',
       check: () ->
         throw new Error('not a type error')
-      validate: false
+      validation: {
+        enable: false
+      }
     } })
 
     assert.throws(
       () -> typed()
       'not a type error'
     )
-    assert.isUndefined(typed.typeReadError())
+    assert.isUndefined(typed.readError())
 
     assert.throws(
       () -> typed('not a number')
       'not a type error'
     )
-    assert.isUndefined(typed.typeWriteError())
+    assert.isUndefined(typed.writeError())
 
   )
 
   test('error leading to default value', () ->
     typed = ko.observable().extend({ convert: {
       type: 'Number',
-      default: 42
-      useDefault: true
+      exRead: {
+        useDefault: true
+        defaultValue: 42
+      }
     } })
 
     assert.strictEqual(typed(), 42)
-    assert.instanceOf(typed.typeReadError(), TypeError)
-    assert.strictEqual(typed.typeReadError().message, 'Unable to convert from internal type Undefined to external type Number')
+    assert.instanceOf(typed.readError(), TypeError)
+    assert.strictEqual(typed.readError().message, 'Unable to convert from internal type Undefined to external type Number')
   )
 )
