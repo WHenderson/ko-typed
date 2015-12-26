@@ -13,7 +13,7 @@ suite('options string', () ->
     assert.instanceOf(ex, TypeError)
 
     typed(10)
-    assert.strictEqual(base(), typed())
+    assert.strictEqual(typed(), 10)
     assert.strictEqual(base(), 10)
 
     try
@@ -22,7 +22,7 @@ suite('options string', () ->
 
     assert.isDefined(ex2)
     assert.instanceOf(ex2, TypeError)
-    assert.strictEqual(base(), typed())
+    assert.strictEqual(typed(), 10)
     assert.strictEqual(base(), 10)
   )
 

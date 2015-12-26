@@ -91,15 +91,18 @@ suite('object', () ->
   )
 
   test('bad write, no throw', () ->
+    debugger
     typed = ko.observable().extend({ type: {
       type: 'Number',
-      noThrow: true
+      exWrite: {
+        noThrow: true
+      }
     } })
 
     typed('not a number')
 
-    assert.instanceOf(typed.typeWriteError(), TypeError)
-    assert.strictEqual(typed.typeWriteError().message, 'Unexpected external type. Expected Number, received String')
+    assert.instanceOf(typed.writeError(), TypeError)
+    assert.strictEqual(typed.writeError().message, 'Unexpected external type. Expected Number, received String')
   )
 
   test('forced failure', () ->
@@ -112,25 +115,27 @@ suite('object', () ->
       () -> typed()
       'not a type error'
     )
-    assert.isUndefined(typed.typeReadError())
+    assert.isUndefined(typed.readError())
 
     assert.throws(
       () -> typed('not a number')
       'not a type error'
     )
-    assert.isUndefined(typed.typeWriteError())
+    assert.isUndefined(typed.writeError())
 
   )
 
   test('error leading to default value', () ->
     typed = ko.observable().extend({ type: {
       type: 'Number',
-      default: 42
-      useDefault: true
+      exRead: {
+        useDefault: true
+        defaultValue: 42
+      }
     } })
 
     assert.strictEqual(typed(), 42)
-    assert.instanceOf(typed.typeReadError(), TypeError)
-    assert.strictEqual(typed.typeReadError().message, 'Unexpected internal type. Expected Number, got Undefined')
+    assert.instanceOf(typed.readError(), TypeError)
+    assert.strictEqual(typed.readError().message, 'Unexpected internal type. Expected Number, got Undefined')
   )
 )

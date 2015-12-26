@@ -17,7 +17,11 @@ suite('coverage', () ->
 
   require('./coverage/type')
 
-  require('./coverage/convert')
+  #require('./coverage/convert')
 
-  require('./coverage/converters')
+  #require('./coverage/validation')
+
+  #require('./coverage/converters')
+
+  #require('./coverage/exception')
 )

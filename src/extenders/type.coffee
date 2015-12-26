@@ -16,11 +16,11 @@
         check: options
       }
 
-    options = extend({}, ko.typed.options, ko.extenders.type.options, options)
-    options.validation = extend({}, ko.typed.options.validation, ko.extenders.type.options.validation, options.validation)
-
-    if options.useDefault and not options.defaultFunc?
-      options.defaultFunc = () -> options.default
+    normal = extend({}, ko.typed.options, ko.extenders.type.options, options)
+    normalizeExRead(normal, ko.typed.options, ko.extenders.type.options, options)
+    normalizeExWrite(normal, ko.typed.options, ko.extenders.type.options, options)
+    normalizeValidation(normal, ko.typed.options, ko.extenders.type.options, options)
+    options = normal
 
     # Gather type names
     typeNames = typeNameToArray(options.type)
@@ -46,45 +46,37 @@
       return (value) ->
         _check(value) and ((typeNames.length == 0) or (typeNames.some((name) -> typeChecks[name](value))))
 
+    writeError = ko.observable()
+    readError = ko.observable()
+
     result = ko.computed({
       pure: options.pure
       deferEvaluation: true
 
-      read: () ->
-        try
+      read: wrapRead(
+        options,
+        target,
+        readError,
+        () ->
           internalValue = target()
 
           if not typeCheck(internalValue)
             throw new TypeError("Unexpected internal type. Expected #{typeName}, got #{isAn(internalValue)}")
 
-        catch ex
-          if ex instanceof TypeError
-            result.typeReadError(ex)
-
-            if options.useDefault
-              return options.defaultFunc()
-
-          throw ex
-
-        result.typeReadError(undefined)
-        return internalValue
-
-      write: (externalValue) ->
-        try
+          return internalValue
+      )
+      write: wrapWrite(
+        options,
+        target,
+        writeError,
+        (externalValue) ->
           if typeCheck(externalValue)
             target(externalValue)
           else
             throw new TypeError("Unexpected external type. Expected #{typeName}, received #{isAn(externalValue)}")
-        catch ex
-          if ex instanceof TypeError
-            result.typeWriteError(ex)
 
-            if options.noThrow
-              return
-
-          throw ex
-
-        result.typeWriteError(undefined)
+          return
+      )
     })
 
     result.typeName = typeName
@@ -92,17 +84,14 @@
     result.typeCheck = typeCheck
     result.typeChecks = typeChecks
 
-    result.typeWriteError = ko.observable()
-    result.typeReadError = ko.observable()
+    result.writeError = writeError
+    result.readError = readError
 
     validate(target, result, options)
 
     if not options.deferEvaluation
       try
-        result()
-
-        if result.typeReadError()?
-          result.typeReadError.valueHasMutated()
+        result.peek()
       catch ex
         result.dispose()
         throw ex
