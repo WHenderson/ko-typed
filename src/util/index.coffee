@@ -13,6 +13,22 @@
     else
       return []
 
+  typeNameToDistinctArray = (value) ->
+    if value == undefined
+      return value
+    else if isAn.String.Literal(value)
+      value = typeNameToArray(value)
+
+    result = []
+    for typeName in value
+      if result.indexOf(typeName) == -1
+        result.push(typeName)
+
+    return result
+
+  typeNameToDistinctString = (value) ->
+    typeNameToString(typeNameToDistinctArray(value))
+
   isValidTypeName = (value) ->
     return /^[A-Z]/.test(value)
 

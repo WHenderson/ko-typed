@@ -1,9 +1,17 @@
+assert = require('chai').assert
+
 suite('type', () ->
-  require('./options-string')
+  require('./single')
 
-  require('./options-array')
+  require('./multiple')
 
-  require('./options-function')
+  require('./options-pure')
 
-  require('./options-object')
+  require('./options-defer-evaluation')
+
+  require('./options-ex-read')
+
+  require('./options-ex-write')
+
+  require('./options-validation')
 )

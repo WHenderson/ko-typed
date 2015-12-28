@@ -1,6 +1,8 @@
 assert = require('chai').assert
 util = require('util')
 
+require('./coverage/assert')
+
 suite('coverage', () ->
   setup(() ->
     # give the code coverage tool time to work
@@ -17,11 +19,11 @@ suite('coverage', () ->
 
   require('./coverage/type')
 
-  require('./coverage/convert')
+  #require('./coverage/convert')
 
   #require('./coverage/validation')
 
-  require('./coverage/converters')
+  #require('./coverage/converters')
 
   #require('./coverage/exception')
 )

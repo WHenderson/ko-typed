@@ -2,7 +2,7 @@
     # validation options
     validation: {
       # turn validation on/off
-      enable: true
+      enable: false
 
       # validate on read
       read: true
@@ -27,7 +27,7 @@
       # Catch exceptions. May also be a function which returns true if the given exception should be caught
       catch: true
 
-      # default catch function to use when catch is true
+      # default catch function to use when catch is true/false
       catchTrue: (ex) -> ex instanceof TypeError
       catchFalse: () -> false
 
@@ -44,8 +44,9 @@
       # Catch exceptions. May also be a function which returns true if the given exception should be caught
       catch: true
 
-      # default catch function to use when catch is true
+      # default catch function to use when catch is true/false
       catchTrue: (ex) -> ex instanceof TypeError
+      catchFalse: () -> false
 
       # Do not throw exceptions when writing
       noThrow: false
@@ -96,9 +97,9 @@
   normalizeValidation = (root, objects...) ->
     norm = (v) ->
       if v == true
-        return { enabled: true }
+        return { enable: true }
       else if v == false
-        return { enabled: false }
+        return { enable: false }
       else
         return v
 
@@ -114,8 +115,8 @@
         if options.exRead.catch(ex)
           readError(ex)
 
-        if options.exRead.useDefault
-          return options.exRead.defaultFunc()
+          if options.exRead.useDefault
+            return options.exRead.defaultFunc()
 
         throw ex
       finally
@@ -130,8 +131,8 @@
         if options.exWrite.catch(ex)
           writeError(ex)
 
-        if options.exWrite.useDefault
-          target(options.exWrite.defaultFunc())
+          if options.exWrite.useDefault
+            target(options.exWrite.defaultFunc())
 
         if not options.exWrite.noThrow
           throw ex
@@ -149,6 +150,9 @@
       return
 
     if ko.validation?
+      ###
+      Note that using ko validation will force an immediate evaluation of the targetted observables
+      ###
       if options.validation.read and options.validation.write
         message = () -> result.writeError()?.message ? result.readError()?.message
       else if options.validation.read
@@ -157,7 +161,7 @@
         message = () -> result.writeError()?.message
 
       applyValidation = (base) ->
-        base.extend({ validatable: { enable: true, deferEvaluation: options.deferEvaluation } })
+        base.extend({ validatable: { enable: true } })
 
         rule = {
           message: undefined

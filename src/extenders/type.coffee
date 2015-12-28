@@ -29,25 +29,35 @@
       for own name, check of options
         if not isValidTypeName(name)
           continue
-        if typeNames.indexOf(name) == -1
-          typeNames.push(name)
+        typeNames.push(name)
 
+    typeNames = typeNameToDistinctArray(typeNames)
     typeName = typeNameToString(typeNames)
+
+    # simple checks
+    typeChecksSimple = {}
+    do ->
+      for name in typeNames
+        typeChecksSimple[name] = options[name] ? isAn(name, { returnChecker: true })
+
+    # simple check
+    typeCheckSimple = options.check ? (() -> true)
 
     # checks
     typeChecks = {}
     do ->
-      for name in typeNames
-        typeChecks[name] = options[name] ? isAn(name, { returnChecker: true })
+      for name, check of typeChecksSimple
+        do (check) ->
+          typeChecks[name] = (value) ->
+            check(value) and typeCheckSimple(value)
 
     # check
     typeCheck = do ->
-      _check = options.check ? (() -> true)
       return (value) ->
-        _check(value) and ((typeNames.length == 0) or (typeNames.some((name) -> typeChecks[name](value))))
+        typeCheckSimple(value) and ((typeNames.length == 0) or (typeNames.some((name) -> typeChecksSimple[name](value))))
 
-    writeError = ko.observable()
     readError = ko.observable()
+    writeError = ko.observable()
 
     result = ko.computed({
       pure: options.pure
@@ -84,8 +94,8 @@
     result.typeCheck = typeCheck
     result.typeChecks = typeChecks
 
-    result.writeError = writeError
     result.readError = readError
+    result.writeError = writeError
 
     validate(target, result, options)
 
