@@ -1,4 +1,5 @@
   fnTrue = () -> true
+  fnFalse = () -> false
   fnIdentity = (x) -> x
 
   typeNameToString = (value) ->

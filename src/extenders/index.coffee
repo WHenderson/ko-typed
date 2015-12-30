@@ -29,7 +29,7 @@
 
       # default catch function to use when catch is true/false
       catchTrue: (ex) -> ex instanceof TypeError
-      catchFalse: () -> false
+      catchFalse: fnFalse
 
       # Do not throw exceptions when reading. Use default value/func instead
       useDefault: false
@@ -46,7 +46,7 @@
 
       # default catch function to use when catch is true/false
       catchTrue: (ex) -> ex instanceof TypeError
-      catchFalse: () -> false
+      catchFalse: fnFalse
 
       # Do not throw exceptions when writing
       noThrow: false

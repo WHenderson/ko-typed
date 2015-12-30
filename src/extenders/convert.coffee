@@ -47,6 +47,9 @@
 
         # Expand all internal types
         for own intTypeName of extTypeOptions
+          if not isValidTypeName(intTypeName)
+            continue
+
           intTypeOptions = options[extTypeName]?[intTypeName] ? {}
 
           normal[extTypeName][intTypeName] = {
@@ -100,7 +103,7 @@
 
           extTypeNames = options.types
           if extTypeNames.length == 0
-            extTypeNames = [isAn(externalValue)]
+            extTypeNames = [isAn(internalValue)]
 
           # Look for specific conversion
           for extTypeName in extTypeNames
@@ -108,7 +111,7 @@
 
             # internal types
             intTypeNames = extTypeOptions.types ? []
-            if intTypeNames.length == 0 and not extTypeOptions.read?
+            if intTypeNames.length == 0
               if options.isTyped
                 # go by target order
                 intTypeNames = target.typeNames
@@ -125,18 +128,17 @@
               intTypeOptions = extTypeOptions[intTypeName] ? {}
 
               # try custom conversion
-              if tryRead(intTypeOptions.read, intTypeOptions.readOptions)
-                return externalValue
-
-              if intTypeName == extTypeName
-                # try no conversion
-                if tryRead(fnIdentity)
+              if intTypeOptions.read?
+                if tryRead(intTypeOptions.read, intTypeOptions.readOptions)
                   return externalValue
-              else
+              # try no conversion
+              else if intTypeName == extTypeName
+                if not extTypeOptions.read? and not options.read? and tryRead(fnIdentity)
+                  return externalValue
+              else if not options.ignoreDefaultConverters
                 # try default conversion
-                if not options.ignoreDefaultConverters
-                  if tryRead(ko.typed.getConverter(intTypeName, extTypeName), intTypeOptions.readOptions)
-                    return externalValue
+                if tryRead(ko.typed.getConverter(intTypeName, extTypeName), intTypeOptions.readOptions)
+                  return externalValue
 
           # Look for one-sided conversion
           for extTypeName in extTypeNames
@@ -149,11 +151,6 @@
           # Look for generic conversion
           if tryRead(options.read, options.readOptions)
             return externalValue
-
-          if options.types.length == 0
-            if options.check(internalValue)
-              externalValue = internalValue
-              return externalValue
 
           if options.type?
             throw new TypeError("Unable to convert from internal type #{isAn(internalValue)} to external type #{options.type}")
@@ -194,7 +191,7 @@
 
               # internal types
               intTypeNames = extTypeOptions.types ? []
-              if intTypeNames.length == 0 and not extTypeOptions.write?
+              if intTypeNames.length == 0
                 if options.isTyped
                   # go by target order
                   intTypeNames = target.typeNames
@@ -206,21 +203,20 @@
                 intTypeOptions = extTypeOptions[intTypeName] ? {}
 
                 # try custom conversion
-                if tryWrite(intTypeOptions.write, intTypeOptions.writeOptions)
-                  return
-
-                # try no conversion
-                if extTypeName == intTypeName and (not options.isTyped or target.typeChecks[extTypeName](externalValue))
-                  if tryWrite(fnIdentity)
+                if intTypeOptions.write?
+                  if tryWrite(intTypeOptions.write, intTypeOptions.writeOptions)
                     return
-
+                # try no conversion
+                else if extTypeName == intTypeName
+                  if not extTypeOptions.write? and not options.write? and (not options.isTyped or target.typeChecks[extTypeName](externalValue)) and tryWrite(fnIdentity)
+                    return
                 # try default conversion
-                if not options.ignoreDefaultConverters
+                else if not options.ignoreDefaultConverters
                   if tryWrite(ko.typed.getConverter(extTypeName, intTypeName), intTypeOptions.writeOptions)
                     return
 
             # Look for one-sided conversion
-            for extTypeName in options.types
+            for extTypeName in extTypeNames
               extTypeOptions = options[extTypeName] ? {}
 
               if (extTypeOptions.checkSelf? and not extTypeOptions.checkSelf(externalValue)) or (not extTypeOptions.checkSelf? and not isAn(externalValue, extTypeName))
