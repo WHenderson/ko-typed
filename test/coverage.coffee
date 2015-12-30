@@ -17,13 +17,9 @@ suite('coverage', () ->
     global.isAn = require('is-an')
   )
 
-  #require('./coverage/type')
+  require('./coverage/type')
 
   require('./coverage/convert')
 
-  #require('./coverage/validation')
-
-  #require('./coverage/converters')
-
-  #require('./coverage/exception')
+  require('./coverage/converters')
 )

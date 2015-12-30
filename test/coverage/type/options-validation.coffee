@@ -2,6 +2,26 @@ assert = require('chai').assert
 require('knockout.validation')
 
 suite('options.validation', () ->
+  test('no validation library', () ->
+    base = ko.observable()
+
+    try
+      koValidation = ko.validation
+      delete ko.validation
+
+      typed = base.extend({ type: {
+        type: 'Undefined'
+        validation: {
+          enable: true
+        }
+      }})
+
+    finally
+      ko.validation = koValidation
+
+    assert.isFalse(ko.validation.utils.isValidatable(typed))
+  )
+
   test('options.validation.enable: true', () ->
     base = ko.observable()
     typed = base.extend({ type: {

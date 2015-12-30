@@ -249,7 +249,7 @@
 
     if not options.deferEvaluation
       try
-        result()
+        result.peek()
       catch ex
         result.dispose()
         throw ex

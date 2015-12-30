@@ -27,9 +27,6 @@
 
     return result
 
-  typeNameToDistinctString = (value) ->
-    typeNameToString(typeNameToDistinctArray(value))
-
   isValidTypeName = (value) ->
     return /^[A-Z]/.test(value)
 

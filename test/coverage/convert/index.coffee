@@ -8,4 +8,7 @@ suite('convert', () ->
 
   require('./errors')
 
+  require('./options-defer-evaluation')
+
+  require('./options-pure')
 )
