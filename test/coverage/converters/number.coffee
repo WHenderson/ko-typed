@@ -73,10 +73,18 @@ suite('number', () ->
     converter = ko.typed.getConverter('Number', 'Number.Integer')
 
     assert.isDefined(converter)
-    assert.strictEqual(converter(20.49), 20)
-    assert.strictEqual(converter(20.5), 21)
-    assert.strictEqual(converter(-20.5), -20)
-    assert.strictEqual(converter(-20.51), -21)
+
+    assert.throws(
+      () -> converter(0.5)
+      TypeError,
+      'Cannot convert from Number to Number.Integer. Number is not an integer'
+    )
+    assert.strictEqual(converter(20), 20)
+
+    assert.strictEqual(converter(20.49, 'round'), 20)
+    assert.strictEqual(converter(20.5, 'round'), 21)
+    assert.strictEqual(converter(-20.5, 'round'), -20)
+    assert.strictEqual(converter(-20.51, 'round'), -21)
 
     assert.strictEqual(converter(45.95, 'floor'), 45)
     assert.strictEqual(converter(-45.95, 'floor'), -46)
