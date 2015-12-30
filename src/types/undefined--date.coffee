@@ -2,5 +2,5 @@
     'Undefined',
     'Date',
     (value) ->
-      return new Date('')
+      return new Date(NaN)
   )

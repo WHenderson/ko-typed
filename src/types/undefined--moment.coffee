@@ -2,5 +2,5 @@
     'Undefined',
     'Moment',
     (value) ->
-      return require('moment')('')
+      return require('moment').invalid()
   )
