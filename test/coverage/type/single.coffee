@@ -13,11 +13,11 @@ suite('single', () ->
       }
     })
 
-    assert.readDoesNotThrow(base, undefined, typed, undefined)
-    assert.writeThrows(base, undefined, typed, 42, true, TypeError, 'Unexpected external type. Expected Undefined, received Number')
-    assert.writeDoesNotThrow(base, undefined, typed, undefined)
-    assert.readThrows(base, 10, typed, TypeError, 'Unexpected internal type. Expected Undefined, got Number')
-    assert.readDoesNotThrow(base, undefined, typed, undefined)
+    assert.write(base, undefined).read(typed, undefined)
+    assert.writeThrows(typed, 42, true, TypeError, 'Unexpected external type. Expected Undefined, received Number').read(base, undefined)
+    assert.write(typed, undefined).read(base, undefined)
+    assert.write(base, 10).readThrows(typed, true, TypeError, 'Unexpected internal type. Expected Undefined, got Number')
+    assert.write(base, undefined).read(typed, undefined)
   )
 
   test('options: string', () ->
@@ -32,11 +32,11 @@ suite('single', () ->
       }
     })
 
-    assert.readDoesNotThrow(base, undefined, typed, undefined)
-    assert.writeThrows(base, undefined, typed, 42, true, TypeError, 'Unexpected external type. Expected Undefined, received Number')
-    assert.writeDoesNotThrow(base, undefined, typed, undefined)
-    assert.readThrows(base, 10, typed, TypeError, 'Unexpected internal type. Expected Undefined, got Number')
-    assert.readDoesNotThrow(base, undefined, typed, undefined)
+    assert.write(base, undefined).read( typed, undefined)
+    assert.writeThrows(typed, 42, true, TypeError, 'Unexpected external type. Expected Undefined, received Number').read(base, undefined)
+    assert.write(typed, undefined).read(base, undefined)
+    assert.write(base, 10).readThrows(typed, true, TypeError, 'Unexpected internal type. Expected Undefined, got Number')
+    assert.write(base, undefined).read( typed, undefined)
   )
 
   test('options.check: function', () ->

@@ -9,5 +9,7 @@ assert.error = (error, args...) ->
       args...
     )
 
+  return assert
+
 assert.noError = (error) ->
   assert.strictEqual(error, undefined)

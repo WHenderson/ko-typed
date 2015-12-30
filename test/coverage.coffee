@@ -1,7 +1,7 @@
 assert = require('chai').assert
 util = require('util')
 
-require('./coverage/assert')
+require('./coverage/common')
 
 suite('coverage', () ->
   setup(() ->
@@ -17,9 +17,9 @@ suite('coverage', () ->
     global.isAn = require('is-an')
   )
 
-  require('./coverage/type')
+  #require('./coverage/type')
 
-  #require('./coverage/convert')
+  require('./coverage/convert')
 
   #require('./coverage/validation')
 

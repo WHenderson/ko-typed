@@ -14,12 +14,12 @@ suite('multiple', () ->
       }
     })
 
-    assert.readDoesNotThrow(base, undefined, typed, undefined)
-    assert.readDoesNotThrow(base, 'value', typed, 'value')
-    assert.writeThrows(base, 'value', typed, 42, true, TypeError, 'Unexpected external type. Expected Undefined|String, received Number')
-    assert.writeDoesNotThrow(base, undefined, typed, undefined)
-    assert.readThrows(base, 10, typed, true, TypeError, 'Unexpected internal type. Expected Undefined|String, got Number')
-    assert.readDoesNotThrow(base, undefined, typed, undefined)
+    assert.write(base, undefined).read( typed, undefined)
+    assert.write(base, 'value').read( typed, 'value')
+    assert.writeThrows(typed, 42, true, TypeError, 'Unexpected external type. Expected Undefined|String, received Number').read(base, 'value')
+    assert.write(typed, undefined).read(base, undefined)
+    assert.write(base, 10).readThrows(typed, true, TypeError, 'Unexpected internal type. Expected Undefined|String, got Number')
+    assert.write(base, undefined).read( typed, undefined)
   )
 
   test('options: string', () ->
@@ -35,12 +35,12 @@ suite('multiple', () ->
       }
     })
 
-    assert.readDoesNotThrow(base, undefined, typed, undefined)
-    assert.readDoesNotThrow(base, 'value', typed, 'value')
-    assert.writeThrows(base, 'value', typed, 42, true, TypeError, 'Unexpected external type. Expected Undefined|String, received Number')
-    assert.writeDoesNotThrow(base, undefined, typed, undefined)
-    assert.readThrows(base, 10, typed, true, TypeError, 'Unexpected internal type. Expected Undefined|String, got Number')
-    assert.readDoesNotThrow(base, undefined, typed, undefined)
+    assert.write(base, undefined).read( typed, undefined)
+    assert.write(base, 'value').read( typed, 'value')
+    assert.writeThrows(typed, 42, true, TypeError, 'Unexpected external type. Expected Undefined|String, received Number').read(base, 'value')
+    assert.write(typed, undefined).read(base, undefined)
+    assert.write(base, 10).readThrows(typed, true, TypeError, 'Unexpected internal type. Expected Undefined|String, got Number')
+    assert.write(base, undefined).read( typed, undefined)
   )
 
   test('options: string - repeated types', () ->

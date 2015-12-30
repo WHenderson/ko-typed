@@ -10,7 +10,7 @@ suite('options.exWrite', () ->
       }
     }})
 
-    assert.writeThrows(base, undefined, typed, undefined, false, TypeError, 'Unexpected external type. Expected Number, received Undefined')
+    assert.writeThrows(typed, undefined, false, TypeError, 'Unexpected external type. Expected Number, received Undefined').read(base, undefined)
   )
 
   test('options.exWrite.catch: true', () ->
@@ -22,7 +22,7 @@ suite('options.exWrite', () ->
       }
     }})
 
-    assert.writeThrows(base, undefined, typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined')
+    assert.writeThrows(typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined').read(base, undefined)
   )
 
   test('options.exWrite.catch: function', () ->
@@ -34,7 +34,7 @@ suite('options.exWrite', () ->
       }
     }})
 
-    assert.writeThrows(base, undefined, typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined')
+    assert.writeThrows(typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined').read(base, undefined)
   )
 
   test('options.exWrite.defaultValue', () ->
@@ -48,7 +48,7 @@ suite('options.exWrite', () ->
       }
     }})
 
-    assert.writeThrows(base, 42, typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined')
+    assert.writeThrows(typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined').read(base, 42)
   )
 
   test('options.exWrite.defaultFunc', () ->
@@ -62,7 +62,7 @@ suite('options.exWrite', () ->
       }
     }})
 
-    assert.writeThrows(base, 42, typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined')
+    assert.writeThrows(typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined').read(base, 42)
   )
 
   test('options.exWrite.noThrow', () ->
@@ -75,6 +75,6 @@ suite('options.exWrite', () ->
       }
     }})
 
-    assert.writeDoesNotThrow(base, undefined, typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined')
+    assert.write(typed, undefined, true, TypeError, 'Unexpected external type. Expected Number, received Undefined').read(base, undefined)
   )
 )

@@ -29,18 +29,18 @@ assert.typed = (typed, details) ->
   assert.isDefined(typed.typeCheck)
   assert.isFunction(typed.typeCheck)
   for value in validValues
-    assert.ok(typed.typeCheck(value))
+    assert.isTrue(typed.typeCheck(value))
   for value in invalidValues
-    assert.notOk(typed.typeCheck(value))
+    assert.isFalse(typed.typeCheck(value))
 
   assert.isDefined(typed.typeChecks)
   assert.isObject(typed.typeChecks)
   assert.deepEqual(Object.keys(typed.typeChecks).sort(), typeNames.sort())
   for typeName in typeNames
     if {}.hasOwnProperty.call(details.validValues, typeName)
-      assert.ok(typed.typeChecks[typeName](details.validValues[typeName]))
+      assert.isTrue(typed.typeChecks[typeName](details.validValues[typeName]))
     for value in invalidValues
-      assert.notOk(typed.typeChecks[typeName](value))
+      assert.isFalse(typed.typeChecks[typeName](value))
 
   assert.isDefined(typed.readError)
   assert.ok(ko.isObservable(typed.readError))
@@ -49,3 +49,5 @@ assert.typed = (typed, details) ->
   assert.isDefined(typed.writeError)
   assert.ok(ko.isObservable(typed.writeError))
   assert.strictEqual(typed.writeError(), undefined)
+
+  return assert

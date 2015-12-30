@@ -1,3 +1,6 @@
+  fnTrue = () -> true
+  fnIdentity = (x) -> x
+
   typeNameToString = (value) ->
     if not value? or value.length == 0
       return undefined
@@ -14,10 +17,7 @@
       return []
 
   typeNameToDistinctArray = (value) ->
-    if value == undefined
-      return value
-    else if isAn.String.Literal(value)
-      value = typeNameToArray(value)
+    value = typeNameToArray(value)
 
     result = []
     for typeName in value

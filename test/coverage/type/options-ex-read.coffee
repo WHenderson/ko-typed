@@ -10,7 +10,7 @@ suite('options.exRead', () ->
       }
     }})
 
-    assert.readThrows(base, undefined, typed, false, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
+    assert.write(base, undefined).readThrows(typed, false, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
   )
 
   test('options.exRead.catch: true', () ->
@@ -22,7 +22,7 @@ suite('options.exRead', () ->
       }
     }})
 
-    assert.readThrows(base, undefined, typed, true, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
+    assert.write(base, undefined).readThrows(typed, true, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
   )
 
   test('options.exRead.catch: function', () ->
@@ -34,7 +34,7 @@ suite('options.exRead', () ->
       }
     }})
 
-    assert.readThrows(base, undefined, typed, true, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
+    assert.write(base, undefined).readThrows(typed, true, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
   )
 
   test('options.exRead.defaultValue', () ->
@@ -48,7 +48,7 @@ suite('options.exRead', () ->
       }
     }})
 
-    assert.readDoesNotThrow(base, undefined, typed, 42, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
+    assert.write(base, undefined).read( typed, 42, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
   )
 
   test('options.exRead.defaultFunc', () ->
@@ -62,6 +62,6 @@ suite('options.exRead', () ->
       }
     }})
 
-    assert.readDoesNotThrow(base, undefined, typed, 10, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
+    assert.write(base, undefined).read( typed, 10, TypeError, 'Unexpected internal type. Expected Number, got Undefined')
   )
 )
