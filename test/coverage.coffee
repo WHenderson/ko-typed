@@ -8,11 +8,13 @@ suite('coverage', () ->
     # give the code coverage tool time to work
     @timeout(10000)
 
+    require('knockout')
+
     # Use compiled javascript for debugging
     if typeof v8debug != 'object'
-      global.ko = require('../dist/ko-typed.apply.coffee')(require('knockout'))
+      global.ko = require('../dist/ko-typed.applied.coffee')
     else
-      global.ko = require('../index.js')(require('knockout'))
+      global.ko = require('../index.js')
 
     global.isAn = require('is-an')
   )
