@@ -99,14 +99,24 @@ suite('string', () ->
 
     assert.isDefined(converter)
 
-    assert.strictEqual(converter('December 17, 1995 03:24:00').valueOf(), (new Date('December 17, 1995 03:24:00')).valueOf())
+    assert.strictEqual(converter('December 17, 1995 03:24:00', { strict: false }).valueOf(), (new Date('December 17, 1995 03:24:00')).valueOf())
+    assert.strictEqual(converter('1995-12-17').valueOf(), (new Date('1995-12-17')).valueOf())
     assert.strictEqual(converter('1995-12-17T03:24:00').valueOf(), (new Date('1995-12-17T03:24:00')).valueOf())
+    assert.strictEqual(converter('1995-12-17T03:24:00', { utc: true }).valueOf(), (new Date(Date.UTC(1995, 11, 17, 3, 24, 0))).valueOf())
+    assert.strictEqual(converter('1995-12-17T03:24:00+01:00').valueOf(), (new Date(Date.UTC(1995, 11, 17, 4, 24, 0))).valueOf())
+    assert.strictEqual(converter('1995-12-17T03:24:00-01:00').valueOf(), (new Date(Date.UTC(1995, 11, 17, 2, 24, 0))).valueOf())
 
     assert.strictEqual(converter('   1995-12-17T03:24:00   ', { trim: true }).valueOf(), (new Date('1995-12-17T03:24:00')).valueOf())
 
     assert.throws(
       () -> converter('invalid')
-      'Unable to convert from invalid to Date'
+      TypeError
+      'Unable to convert from String to Date'
+    )
+    assert.throws(
+      () -> converter('invalid', { strict: false })
+      TypeError
+      'Unable to convert from String to Date'
     )
   )
 
@@ -121,7 +131,8 @@ suite('string', () ->
 
     assert.throws(
       () -> converter('invalid')
-      'Unable to convert from invalid to Moment'
+      TypeError
+      'Unable to convert from String to Moment'
     )
   )
 )

@@ -8,7 +8,7 @@
       if defaultOptions?
         if defaultOption?
           wrapper = (value, options) ->
-            if options? and not isAn.Object(options)
+            if arguments.length == 2 and not isAn.Object(options)
               o = {}
               o[defaultOption] = options
               options = o

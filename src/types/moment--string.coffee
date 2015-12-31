@@ -7,7 +7,6 @@
 
       return value.locale(options.locale).format(options.format)
     {
-      strict: false
       locale: 'en'
       format: 'L'
     }

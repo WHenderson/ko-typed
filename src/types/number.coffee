@@ -20,14 +20,17 @@
       value = value.toString().split('e')
       return (+(value[0] + 'e' + (if value[1] then (+value[1] + exp) else exp)))
 
+    ### !pragma coverage-skip-next ###
     if not Math.round10?
       Math.round10 = (value, exp) ->
         return decimalAdjust(Math.round, value, exp)
 
+    ### !pragma coverage-skip-next ###
     if not Math.floor10?
       Math.floor10 = (value, exp) ->
         return decimalAdjust(Math.floor, value, exp)
 
+    ### !pragma coverage-skip-next ###
     if not Math.ceil10?
       Math.ceil10 = (value, exp) ->
         return decimalAdjust(Math.ceil, value, exp)
