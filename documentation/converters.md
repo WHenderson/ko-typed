@@ -7,6 +7,8 @@
 
 ## Converters
 
+Converters are provides between all common types where conversion is common and unambiguous.
+
 ### API
 
 The converters API can be accessed from `ko.typed`

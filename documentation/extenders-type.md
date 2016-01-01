@@ -38,13 +38,9 @@ ko.observable().extend({ type: options })
 * `options.check: Function`
   Returns false to refuse assignment of the provided value.
   Signature: `check(value) : Boolean`
-* [common options](./extenders.md)
 * `options.TypeName : Function`
   Provides a custom type check for `TypeName`.
   This type check will override any checks provided by the is-an library for `TypeName`.
   Multiple `TypeName : Function`'s can be provided in this way.
   Each `TypeName` provided this way is added to `options.type`.
-
-
-
-
+* [common options](./extenders.md)
