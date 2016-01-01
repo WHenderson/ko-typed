@@ -79,6 +79,32 @@ and individual extensions (`ko.observable().extend({ <EXTENDER>: options })`).
       Syntax `defaultFunc() : value`.
       The result of this function is used as the return value when an exception is caught. This value overrides `options.exRead.defaultValue`.
 
-  
+* `options.exWrite`
+  Object literal containing options for handling exceptions thrown when writing to the resulting observable.
 
+  * `options.exWrite.catch: Boolean|Function`
+    Default `true`.
+    * `true`
+      Catch all `TypeError` exceptions
+    * `false`
+      Catch no exceptions
+    * `Function`
+      Syntax `catch(error) : Boolean`
+      `Function` is called with the thrown exception. Return `true` to catch the exception.
+
+  * `options.exWrite.useDefault : Boolean`
+    Default `false`.
+    If `true`, caught exceptions will write the provided default value to the underlying observables.
+
+  * `options.exWrite.defaultValue: value`
+    Default `undefined`.
+    The default value to use when an exception is caught. This value is overridden by `options.exWrite.defaultFunc`.
+
+  * `options.exWrite.defaultFunc: Undefined|Function`
+    Default `undefined`.
+    * `Undefined`
+      Not used.
+    * `Function`
+      Syntax `defaultFunc() : value`.
+      The result of this function is used as the default value when an exception is caught. This value overrides `options.exWrite.defaultValue`.
 
