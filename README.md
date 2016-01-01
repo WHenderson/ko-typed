@@ -79,7 +79,6 @@ typed('string'); // good. 'string' is of a supported type.
 base(10); typed(); // bad. 10 is not of a supported type.
 typed(10); // bad. 10 is not of a supported type.
 ```
-
     See [examples/type](../examples/type) for more examples.
     See [test/coverage/type](../test/coverage/type) for detailed tests.
 
@@ -112,7 +111,6 @@ assert.strictEqual(converted(), '10');
 base('string');
 assert.strictEqual(converted(), 'string');
 ```
-
     See [examples/convert](../examples/convert) for more examples.
     See [test/coverage/convert](../test/coverage/convert) for detailed tests.
 
