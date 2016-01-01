@@ -55,21 +55,20 @@ require(['knockout', 'ko-typed'], function (ko) {
 
 ## API
 
-* [extenders](./documentation/extenders.md)
-  [ko extenders](http://knockoutjs.com/documentation/extenders.html) are used to wrap a given observable and provide a typed interface.
+### [extenders](./documentation/extenders.md)
 
-  * [extenders-type](./documentation/extenders-type.md)
-    Create a computed observable which only accepts a specified list of types.
-    Does not perform conversions.
+[ko extenders](http://knockoutjs.com/documentation/extenders.html) are used to wrap a given observable and provide a typed interface.
 
-    Supports:
-    * Generic types
-    * Custom types
-    * Overrides
+#### [extenders-type](./documentation/extenders-type.md)
+Create a computed observable which only accepts a specified list of types.
+Does not perform conversions.
 
-    **Example**
-    See [examples/type](./examples/type) for more examples.
-    See [test/coverage/type](./test/coverage/type) for detailed tests.
+Supports:
+* Generic types
+* Custom types
+* Overrides
+
+##### Example
 
 ```js
 var base = ko.observable();
@@ -83,19 +82,19 @@ base(10); typed(); // bad. 10 is not of a supported type.
 typed(10); // bad. 10 is not of a supported type.
 ```
 
-  * [extenders-convert](./documentation/extenders-type.md)
-    Create a computed observable which converts to and from internal and external types.
+See [examples/type](./examples/type) for more examples.
+See [test/coverage/type](./test/coverage/type) for detailed tests.
 
-    Supports:
-    * Type restriction
-    * Custom conversions
-    * Default conversions
-    * Overrides
+#### [extenders-convert](./documentation/extenders-type.md)
+Create a computed observable which converts to and from internal and external types.
 
-    **Example**
-    See [examples/convert](./examples/convert) for more examples.
-    See [test/coverage/convert](./test/coverage/convert) for detailed tests.
+Supports:
+* Type restriction
+* Custom conversions
+* Default conversions
+* Overrides
 
+##### Example
 ```js
 var base = ko.observable();
 var typed = base.extend({ type: 'Undefined|String' });
@@ -116,6 +115,9 @@ base('string');
 assert.strictEqual(converted(), 'string');
 ```
 
-* [converters](./documentation/converters.md)
-  Converters between all common types are provided where conversion is common and unambiguous.
+See [examples/convert](./examples/convert) for more examples.
+See [test/coverage/convert](./test/coverage/convert) for detailed tests.
+
+### [converters](./documentation/converters.md)
+Converters between all common types are provided where conversion is common and unambiguous.
 
