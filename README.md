@@ -68,6 +68,9 @@ require(['knockout', 'ko-typed'], function (ko) {
     * Overrides
 
     **Example**
+    See [examples/type](../examples/type) for more examples.
+    See [test/coverage/type](../test/coverage/type) for detailed tests.
+    
 ```js
 var base = ko.observable();
 var typed = base.extend({ type: 'Undefined|String' });
@@ -79,8 +82,6 @@ typed('string'); // good. 'string' is of a supported type.
 base(10); typed(); // bad. 10 is not of a supported type.
 typed(10); // bad. 10 is not of a supported type.
 ```
-    See [examples/type](../examples/type) for more examples.
-    See [test/coverage/type](../test/coverage/type) for detailed tests.
 
   * [extenders-convert](./documentation/extenders-type.md)
     Create a computed observable which converts to and from internal and external types.
@@ -92,6 +93,9 @@ typed(10); // bad. 10 is not of a supported type.
     * Overrides
 
     **Example**
+    See [examples/convert](../examples/convert) for more examples.
+    See [test/coverage/convert](../test/coverage/convert) for detailed tests.
+
 ```js
 var base = ko.observable();
 var typed = base.extend({ type: 'Undefined|String' });
@@ -111,8 +115,6 @@ assert.strictEqual(converted(), '10');
 base('string');
 assert.strictEqual(converted(), 'string');
 ```
-    See [examples/convert](../examples/convert) for more examples.
-    See [test/coverage/convert](../test/coverage/convert) for detailed tests.
 
 * [converters](./documentation/converters.md)
   Converters are provides between all common types where conversion is common and unambiguous.
