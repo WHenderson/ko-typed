@@ -108,3 +108,10 @@ and individual extensions (`ko.observable().extend({ <EXTENDER>: options })`).
       Syntax `defaultFunc() : value`.
       The result of this function is used as the default value when an exception is caught. This value overrides `options.exWrite.defaultValue`.
 
+* `options.pure`
+  Default `true`.
+  This option is passed to `ko.computed` to select the usage of pureComputeds.
+
+* `options.deferEvaluation`
+  Default `true`.
+  If `false`, the resulting observable is evaluated once (using [.peek()](http://knockoutjs.com/documentation/computed-reference.html)) during extension.
