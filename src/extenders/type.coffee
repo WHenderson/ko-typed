@@ -24,13 +24,7 @@
 
     # Gather type names
     typeNames = typeNameToArray(options.type)
-
-    do ->
-      for own name, check of options
-        if not isValidTypeName(name)
-          continue
-        typeNames.push(name)
-
+    typeNames.push((name for own name of options when isValidTypeName(name))...)
     typeNames = typeNameToDistinctArray(typeNames)
     typeName = typeNameToString(typeNames)
 
