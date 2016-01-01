@@ -18,9 +18,6 @@
 
       # the message to use (defaults to the message from the thrown exception)
       message: undefined
-
-      # the message to use when there is an error and no message is available
-      defaultMessage: 'is invalid'
     }
 
     exRead: {
