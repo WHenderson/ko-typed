@@ -1,6 +1,6 @@
 # ko-typed
 
-ko-typed provides observable extensions for restricting and converting observable values based on type.
+ko-typed provides observable extensions for restricting and converting observable values based on type. Supports validation.
 
 [![Build Status](https://travis-ci.org/WHenderson/ko-typed.svg?branch=master)](https://travis-ci.org/WHenderson/ko-typed)
 [![Coverage Status](https://coveralls.io/repos/WHenderson/ko-typed/badge.svg?branch=master&service=github)](https://coveralls.io/github/WHenderson/ko-typed?branch=master)
@@ -117,5 +117,5 @@ assert.strictEqual(converted(), 'string');
 ```
 
 * [converters](./documentation/converters.md)
-  Converters are provides between all common types where conversion is common and unambiguous.
+  Converters between all common types are provided where conversion is common and unambiguous.
 

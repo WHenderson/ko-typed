@@ -7,7 +7,7 @@
 
 ## Converters
 
-Converters are provides between all common types where conversion is common and unambiguous.
+Converters between all common types are provided where conversion is common and unambiguous.
 
 ### API
 
