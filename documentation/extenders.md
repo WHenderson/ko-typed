@@ -14,6 +14,36 @@
 * `ko.typed.options`
    Default options used for each extender.
 
+#### Common observable API
+
+Observables extended using `type` or `convert` contain the following API.
+
+* `observable.typeName : Undefined|String`
+  * `Undefined`
+    The underlying observable has a custom or undefined type.
+  * `String`
+    `|` seperated string of type names.
+      e.g. `'Undefined|Number|String`
+
+* `observable.typeName : Array`
+  An array of type names supported by `observable`.
+  Note that this is just a guide as the observable may have further restrictions.
+
+* `observable.typeCheck: Function`
+  Syntax `check(value) : Boolean`
+  A method which returns `true` if the provided `value` is a supported type.
+
+* `observable.typeChecks: Object.Literal`
+  A map of type checks functions keyed on TypeName.
+  Each type check has the syntax `check(value) : Boolean`.
+  Each check function returns true if the provided value is of the correct type and is supported.
+
+* `observable.readError: ko.observable`
+  A simple observable containing the (caught) error produced from the last read operation. Contains `undefined` if no error was generated during the last read operation.
+
+* `observable.writeError: ko.observable`
+  A simple observable containing the (caught) error produced from the last write operation. Contains `undefined` if no error was generated during the last write operation.
+
 ### Common options
 
 The following options can be applied at any level. Global default (`ko.typed.options`), extender default (`ko.extenders.<EXTENDER>.options`),
@@ -115,3 +145,13 @@ and individual extensions (`ko.observable().extend({ <EXTENDER>: options })`).
 * `options.deferEvaluation`
   Default `true`.
   If `false`, the resulting observable is evaluated once (using [.peek()](http://knockoutjs.com/documentation/computed-reference.html)) during extension.
+
+### [`type`](./extenders-type.md)
+
+Create a computed observable which only accepts a specified list of types.
+Does not perform conversions.
+
+
+### [`convert`](./extenders-convert.md)
+
+Create a computed observable which converts to and from internal and external types.
