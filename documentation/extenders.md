@@ -23,7 +23,7 @@ and individual extensions (`ko.observable().extend({ <EXTENDER>: options })`).
   Object literal containing default validation options.
 
   * `options.validation.enable: Boolean`
-    Default 'false'.
+    Default `false`.
     If true, extensions enable and contain validation using the included validation library.
     `ko.validation` must be defined at the time of extension.
 
@@ -49,4 +49,36 @@ and individual extensions (`ko.observable().extend({ <EXTENDER>: options })`).
       Validation error message is the message from the exception that caused validation to fail.
     * `String`
       This message is used for validation errors.
+
+* `options.exRead`
+  Object literal containing options for handling exceptions thrown when reading the resulting observable.
+
+  * `options.exRead.catch: Boolean|Function`
+    Default `true`.
+    * `true`
+      Catch all `TypeError` exceptions
+    * `false`
+      Catch no exceptions
+    * `Function`
+      Syntax `catch(error) : Boolean`
+      `Function` is called with the thrown exception. Return `true` to catch the exception.
+
+  * `options.exRead.useDefault : Boolean`
+    Default `false`.
+    If `true`, caught exceptions will result in the default value as defined by `options.exRead.defaultValue` or `options.exRead.defaultFunc`.
+
+  * `options.exRead.defaultValue: value`
+    Default `undefined`.
+    The value to return when an exception is caught. This value is overridden by `options.exRead.defaultFunc`.
+
+  * `options.exRead.defaultFunc: Undefined|Function`
+    Default `undefined`.
+    * `Undefined`
+      Not used.
+    * `Function`
+      Syntax `defaultFunc() : value`.
+      The result of this function is used as the return value when an exception is caught. This value overrides `options.exRead.defaultValue`.
+
+  
+
 
