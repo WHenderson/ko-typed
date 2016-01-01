@@ -1,6 +1,4 @@
   ko.extenders.convert = (target, options) ->
-    # ToDo: .type becomes optional as the type restriction list, .TypeName options are used as overrides during the specific conversions. Need only to skip expanding .types and to fix the untyped conversion to check for overrides. *Might* refactor some common code
-    # ToDo: should we do the same for .type in the type restricted version for symmetry? Yes!
     if options == false
       return target
 
