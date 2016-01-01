@@ -19,6 +19,31 @@ Supports:
 Uses the [is-an](https://github.com/WHenderson/is-an) library for generic type matching.
 See [Extenders](./extenders.md) for generic information around ko-typed extenders.
 
+### Example
+
+```js
+var base = ko.observable();
+var typed = base.extend({ type: 'Undefined|String' });
+var converted = typed.extend({ convert: true });
+
+converted('');
+assert.strictEqual(base(), undefined);
+converted(10);
+assert.strictEqual(base(), '10');
+converted('string');
+assert.strictEqual(base(), 'string');
+
+base(undefined);
+assert.strictEqual(converted(), undefined);
+base('10');
+assert.strictEqual(converted(), '10');
+base('string');
+assert.strictEqual(converted(), 'string');
+```
+
+See [examples/convert](../examples/convert) for more examples.
+See [test/coverage/convert](../test/coverage/convert) for detailed tests.
+
 ### Syntax
 
 * `options: String|Array` -> `options.type: String|Array`

@@ -19,6 +19,23 @@ Supports:
 Uses the [is-an](https://github.com/WHenderson/is-an) library for generic type matching.
 See [Extenders](./extenders.md) for generic information around ko-typed extenders.
 
+### Example
+
+```js
+var base = ko.observable();
+var typed = base.extend({ type: 'Undefined|String' });
+
+typed(); // good. undefined is of a supported type.
+typed(undefined); // good. undefined is of a supported type.
+typed('string'); // good. 'string' is of a supported type.
+
+base(10); typed(); // bad. 10 is not of a supported type.
+typed(10); // bad. 10 is not of a supported type.
+```
+
+See [examples/type](../examples/type) for more examples.
+See [test/coverage/type](../test/coverage/type) for detailed tests.
+
 ### Syntax
 
 ```js
@@ -44,3 +61,5 @@ ko.observable().extend({ type: options })
   Multiple `TypeName : Function`'s can be provided in this way.
   Each `TypeName` provided this way is added to `options.type`.
 * [common options](./extenders.md)
+
+
