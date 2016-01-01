@@ -68,9 +68,9 @@ require(['knockout', 'ko-typed'], function (ko) {
     * Overrides
 
     **Example**
-    See [examples/type](../examples/type) for more examples.
-    See [test/coverage/type](../test/coverage/type) for detailed tests.
-    
+    See [examples/type](./examples/type) for more examples.
+    See [test/coverage/type](./test/coverage/type) for detailed tests.
+
 ```js
 var base = ko.observable();
 var typed = base.extend({ type: 'Undefined|String' });
@@ -93,8 +93,8 @@ typed(10); // bad. 10 is not of a supported type.
     * Overrides
 
     **Example**
-    See [examples/convert](../examples/convert) for more examples.
-    See [test/coverage/convert](../test/coverage/convert) for detailed tests.
+    See [examples/convert](./examples/convert) for more examples.
+    See [test/coverage/convert](./test/coverage/convert) for detailed tests.
 
 ```js
 var base = ko.observable();
