@@ -11,6 +11,11 @@
 Create a computed observable which only accepts a specified list of types.
 Does not perform conversions.
 
+Supports:
+* Generic types
+* Custom types
+* Overrides
+
 Uses the [is-an](https://github.com/WHenderson/is-an) library for generic type matching.
 See [Extenders](./extenders.md) for generic information around ko-typed extenders.
 
