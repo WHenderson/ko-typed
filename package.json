@@ -1,7 +1,7 @@
 {
   "name": "ko-typed",
   "author": "Will Henderson <whenderson.github@gmail.com> (https://github.com/WHenderson)",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "ko-typed provides observable extensions for restricting and converting observable values based on type",
   "keywords": [
     "type",
@@ -42,16 +42,16 @@
     "gulp-uglify": "^1.2.0",
     "gulp-umd": "git+https://github.com/WHenderson/gulp-umd.git",
     "gulp-util": "^3.0.6",
-    "is-an": "^0.5.0",
-    "knockout": "^3.4.0",
     "knockout.validation": "^2.0.3",
     "lazypipe": "^1.0.1",
     "lodash": "^3.10.0",
     "mocha": "^2.2.5",
-    "moment": "^2.10.6"
+    "moment": "^2.10.6",
+    "is-an": "^0.7.0",
+    "knockout": "^3.4.0"
   },
   "peerDependencies": {
-    "is-an": "^0.5.0",
+    "is-an": "^0.7.0",
     "knockout": "^3.4.0"
   }
 }
