@@ -47,11 +47,13 @@
     "lodash": "^3.10.0",
     "mocha": "^2.2.5",
     "moment": "^2.10.6",
-    "is-an": "^0.7.0",
-    "knockout": "^3.4.0"
+    "knockout": "^3.4.0",
+    "is-an": ">=0.7.0",
+    "ko-validated": ">=0.2.0-prerelease"
   },
   "peerDependencies": {
-    "is-an": "^0.7.0",
-    "knockout": "^3.4.0"
+    "knockout": "^3.4.0",
+    "is-an": ">=0.7.0",
+    "ko-validated": ">=0.2.0-prerelease"
   }
 }
