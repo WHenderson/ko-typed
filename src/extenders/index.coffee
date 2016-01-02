@@ -138,6 +138,9 @@
           writeError(undefined)
 
   validate = (target, result, options) ->
+    if not ko.validated? and not ko.validation?
+      return
+
     if not options.validation.enable
       return
 
@@ -146,16 +149,19 @@
     if (not validation.target and not validation.result) or (not validation.read and not validation.write)
       return
 
+    if options.validation.read and options.validation.write
+      message = () -> (result.writeError() ? result.readError())?.message
+    else if options.validation.read
+      message = () -> result.readError()?.message
+    else #if options.validation.write
+      message = () -> result.writeError()?.message
+
     if ko.validation?
       ###
       Note that using ko validation will force an immediate evaluation of the targetted observables
       ###
-      if options.validation.read and options.validation.write
-        message = () -> result.writeError()?.message ? result.readError()?.message
-      else if options.validation.read
-        message = () -> result.readError()?.message
-      else #if options.validation.write
-        message = () -> result.writeError()?.message
+
+      rules = []
 
       applyValidation = (base) ->
         base.extend({ validatable: { enable: true } })
@@ -171,20 +177,52 @@
               rule.message = validation.message ? m
               return false
         }
+        rules.push(rule)
 
         ko.validation.addAnonymousRule(base, rule)
 
         return
 
-      if validation.target
-        applyValidation(target)
+      dispose = result.dispose
+      result.dispose = () ->
+        for rule in rules
+          rule.message = undefined
+          rule.validator = fnTrue
 
-      if validation.result
-        applyValidation(result)
+        if options.validation.write
+          result.writeError.valueHasMutated()
+        else# if options.validation.read
+          result.readError.valueHasMutated()
+
+        return dispose.apply(this, arguments)
+
+    if ko.validated?
+      # Add code here!
+
+      validatedMessage = message
+      if validation.message?
+        validatedMessage = () ->
+          if message()? then validation.message else undefined
+
+      errors = []
+
+      applyValidation = (base) ->
+        base.extend({ fallible: true })
+
+        errors.push(base.errors.add(validatedMessage))
+
+        return
+
+      dispose = result.dispose
+      result.dispose = () ->
+        for error in errors
+          error.dispose()
+        return dispose.apply(this, arguments)
+
+    if validation.target
+      applyValidation(target)
+
+    if validation.result
+      applyValidation(result)
 
     return
-
-
-
-
-
