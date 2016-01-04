@@ -29,7 +29,10 @@
       return ko.typed
 
     ko.typed.getConverter = (fromTypeName, toTypeName) ->
-      converters[fromTypeName]?[toTypeName]
+      if fromTypeName == toTypeName
+        return fnIdentity
+      else
+        return converters[fromTypeName]?[toTypeName]
 
     ko.typed.removeConverter = (fromTypeName, toTypeName) ->
       if converters[fromTypeName]?[toTypeName]?

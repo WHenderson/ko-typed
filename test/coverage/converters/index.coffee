@@ -1,5 +1,7 @@
 suite('converters', () ->
 
+  require('./identity')
+
   require('./undefined')
   require('./boolean')
   require('./number')
